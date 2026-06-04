@@ -9,7 +9,7 @@
        KONFIGURASI — ubah dua nilai ini saja
        ================================================ -->
   <script>
-    var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx4O8tFhNGpnLwD7R8-uuYAiL5PV78ZpvsXaHTcrynkkEgd9t_-by1bxZI97cjTf2ogyg/exec";
+    var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNrjxTN2FY-fDkKz9uhvAtZw7_cMeNCm3ONh4Fz0sHYhYrykclSJavL4kc8QI0WyWFPA/exec";
     var LMS_URL         = "https://myapps.aio.co.id/otsukago-mobile";
   </script>
   <!-- ================================================ -->
@@ -50,7 +50,7 @@
     .container { max-width: 960px; margin: 0 auto; }
 
     .page-header { margin-bottom: 1.5rem; }
-    .page-title  { font-size: 20px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; }
+    .page-title  { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
     .page-sub    { font-size: 13px; color: var(--text-2); margin-top: 3px; }
 
     .card {
@@ -66,35 +66,17 @@
     }
     .card-section:last-child { border-bottom: none; }
 
-    /* Mode toggle */
-    .mode-wrap {
-      display: flex;
-      border: 0.5px solid var(--border-md);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      width: fit-content;
-    }
-    .mode-btn {
-      background: transparent;
-      border: none;
-      border-right: 0.5px solid var(--border-md);
-      padding: 7px 16px;
-      font-size: 13px;
-      font-family: var(--font);
-      cursor: pointer;
-      color: var(--text-2);
-      transition: background 0.15s;
-      white-space: nowrap;
-    }
-    .mode-btn:last-child { border-right: none; }
-    .mode-btn.active { background: var(--bg); color: var(--text-1); font-weight: 500; }
+    /* Gate (login) */
+    .gate-title { font-size: 15px; font-weight: 600; color: var(--text-1); margin-bottom: 4px; }
+    .gate-sub   { font-size: 13px; color: var(--text-2); margin-bottom: 1.25rem; }
 
-    .filter-row   { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
-    .filter-group { display: flex; flex-direction: column; gap: 4px; }
-    .filter-label { font-size: 11px; color: var(--text-3); letter-spacing: 0.4px; }
+    .field-group  { display: flex; flex-direction: column; gap: 4px; margin-bottom: 1rem; }
+    .field-label  { font-size: 11px; color: var(--text-3); letter-spacing: 0.4px; }
+    .field-note   { font-size: 11px; color: var(--text-3); margin-top: 4px; font-style: italic; }
 
-    select, input[type="text"] {
-      min-width: 220px;
+    select, input[type="text"], input[type="password"] {
+      width: 100%;
+      max-width: 320px;
       padding: 8px 10px;
       font-size: 14px;
       font-family: var(--font);
@@ -105,7 +87,74 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    select:focus, input[type="text"]:focus { border-color: #185FA5; }
+    select:focus,
+    input[type="text"]:focus,
+    input[type="password"]:focus { border-color: #185FA5; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 18px; font-size: 13px; font-family: var(--font);
+      font-weight: 500; border-radius: var(--radius-sm);
+      background: #185FA5; color: #fff; border: none; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-primary:hover:not(:disabled) { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; font-size: 12px; font-family: var(--font);
+      font-weight: 500; border-radius: var(--radius-sm);
+      background: transparent; color: var(--text-2);
+      border: 0.5px solid var(--border-md); cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-ghost:hover { background: var(--bg); }
+
+    .error-inline {
+      font-size: 12px; color: var(--red-fg);
+      margin-top: 6px; display: none;
+    }
+
+    /* Active department pill */
+    .dept-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--blue-bg); color: var(--blue-fg);
+      font-size: 13px; font-weight: 500;
+      padding: 5px 12px; border-radius: 99px;
+    }
+    .dept-pill-change {
+      font-size: 11px; color: var(--blue-fg); cursor: pointer;
+      text-decoration: underline; opacity: 0.7;
+    }
+    .dept-pill-change:hover { opacity: 1; }
+
+    /* Mode toggle */
+    .mode-wrap {
+      display: flex;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      width: fit-content;
+    }
+    .mode-btn {
+      background: transparent; border: none;
+      border-right: 0.5px solid var(--border-md);
+      padding: 7px 16px; font-size: 13px;
+      font-family: var(--font); cursor: pointer;
+      color: var(--text-2); transition: background 0.15s; white-space: nowrap;
+    }
+    .mode-btn:last-child { border-right: none; }
+    .mode-btn.active { background: var(--bg); color: var(--text-1); font-weight: 500; }
+
+    .filter-row   { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-label { font-size: 11px; color: var(--text-3); letter-spacing: 0.4px; }
+
+    input.nik-input {
+      min-width: 220px; max-width: 280px;
+      padding: 8px 10px; font-size: 14px;
+    }
 
     /* Stats */
     .stats-row {
@@ -133,10 +182,10 @@
     .col-nik  { width: 70px; }
     .col-name { width: 180px; }
     .col-dept { width: 150px; }
-    .col-lvl  { width: 100px; }
+    .col-lvl  { width: 110px; }
     .col-prog { width: 120px; }
     .col-stat { width: 90px; }
-    .col-rem  { /* flexible */ }
+    .col-rem  { }
 
     .emp-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -149,11 +198,7 @@
     .b-progress { background: var(--blue-bg);  color: var(--blue-fg); }
     .b-none     { background: var(--gray-bg);  color: var(--gray-fg); }
 
-    /* Level badge */
-    .lvl-badge {
-      display: inline-block; font-size: 10px; padding: 2px 7px;
-      border-radius: 99px; font-weight: 500; white-space: nowrap;
-    }
+    .lvl-badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 99px; font-weight: 500; white-space: nowrap; }
     .lvl-1 { background: var(--teal-bg);   color: var(--teal-fg); }
     .lvl-2 { background: var(--blue-bg);   color: var(--blue-fg); }
     .lvl-3 { background: var(--purple-bg); color: var(--purple-fg); }
@@ -173,23 +218,23 @@
     .tag-link:hover { opacity: 0.8; }
     .tag-link svg { width: 9px; height: 9px; flex-shrink: 0; }
 
-    /* Self / Team profile header */
+    /* Profile headers */
     .profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
     .avatar {
       width: 52px; height: 52px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; font-weight: 600; flex-shrink: 0;
     }
-    .avatar-blue  { background: var(--blue-bg);  color: var(--blue-fg); }
-    .avatar-teal  { background: var(--teal-bg);  color: var(--teal-fg); }
+    .avatar-blue { background: var(--blue-bg); color: var(--blue-fg); }
+    .avatar-teal { background: var(--teal-bg); color: var(--teal-fg); }
     .profile-name { font-size: 16px; font-weight: 600; color: var(--text-1); }
     .profile-meta { font-size: 13px; color: var(--text-2); margin-top: 2px; }
 
-    .prog-big-wrap      { background: var(--bg); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; }
-    .prog-big-label     { font-size: 11px; color: var(--text-2); margin-bottom: 8px; }
-    .prog-big-pct       { font-size: 30px; font-weight: 700; margin-bottom: 6px; }
-    .prog-big-bar-wrap  { background: var(--border); border-radius: 99px; height: 8px; width: 100%; }
-    .prog-big-bar-fill  { height: 8px; border-radius: 99px; transition: width 0.5s ease; }
+    .prog-big-wrap     { background: var(--bg); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; }
+    .prog-big-label    { font-size: 11px; color: var(--text-2); margin-bottom: 8px; }
+    .prog-big-pct      { font-size: 30px; font-weight: 700; margin-bottom: 6px; }
+    .prog-big-bar-wrap { background: var(--border); border-radius: 99px; height: 8px; width: 100%; }
+    .prog-big-bar-fill { height: 8px; border-radius: 99px; transition: width 0.5s ease; }
 
     .section-label { font-size: 11px; color: var(--text-2); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.3px; }
 
@@ -227,13 +272,17 @@
       border: 2px solid var(--border-md); border-top-color: #185FA5;
       border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px;
     }
+    .spinner-sm {
+      display: inline-block; width: 13px; height: 13px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 640px) {
       .mode-btn { padding: 7px 10px; font-size: 12px; }
       .col-name { width: 130px; }
       .col-prog { width: 100px; }
-      select, input[type="text"] { min-width: 160px; }
     }
   </style>
 </head>
@@ -245,100 +294,84 @@
     <div class="page-sub">Mandatory Training — PT. Amerta Indah Otsuka</div>
   </div>
 
-  <!-- Loading -->
+  <!-- Initial loading -->
   <div class="card" id="loadingCard">
     <div class="card-section loading-state">
       <div class="spinner"></div>
-      <div>Loading data from spreadsheet...</div>
+      <div>Loading data...</div>
     </div>
   </div>
 
-  <!-- Error -->
+  <!-- Fatal error -->
   <div class="card" id="errorCard" style="display:none">
     <div class="card-section error-state" id="errorMsg"></div>
   </div>
 
-  <!-- Main app -->
+  <!-- GATE: Department selection + password -->
+  <div class="card" id="gateCard" style="display:none">
+    <div class="card-section">
+      <div class="gate-title">Select Your Department</div>
+      <div class="gate-sub">Enter your department and access code to continue.</div>
+
+      <div class="field-group">
+        <span class="filter-label">Department</span>
+        <select id="gateDept" onchange="onGateDeptChange()">
+          <option value="">-- Select Department --</option>
+        </select>
+      </div>
+
+      <div class="field-group" id="passwordGroup" style="display:none">
+        <span class="filter-label">Access Code</span>
+        <input type="password" id="gatePassword"
+               placeholder="Enter access code"
+               onkeydown="if(event.key==='Enter') submitPassword()" />
+        <span class="field-note">Please check the code in your email</span>
+        <div class="error-inline" id="pwError">Incorrect access code. Please try again.</div>
+      </div>
+
+      <button class="btn-primary" id="submitBtn"
+              style="display:none" onclick="submitPassword()">
+        Continue
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN APP (shown after password verified) -->
   <div id="mainApp" style="display:none">
 
-    <!-- Mode toggle + filters -->
+    <!-- Dept pill + change -->
     <div class="card">
-      <div class="card-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div class="card-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div class="dept-pill">
+          <span id="activeDeptLabel"></span>
+          <span class="dept-pill-change" onclick="resetToGate()">Change department</span>
+        </div>
         <div class="mode-wrap">
-          <button class="mode-btn active" id="btnDept" onclick="setMode('dept')">Filter by Department</button>
-          <button class="mode-btn" id="btnSelf" onclick="setMode('self')">Check My Progress</button>
+          <button class="mode-btn active" id="btnSelf" onclick="setMode('self')">Check My Progress</button>
           <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Check My Team Progress</button>
         </div>
       </div>
 
-      <!-- Filter: Department -->
-      <div class="card-section" id="filterDept">
-        <div class="filter-row">
-          <div class="filter-group">
-            <span class="filter-label">Department</span>
-            <select id="deptSelect" onchange="onDeptChange()">
-              <option value="">-- Select Department --</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Filter: NIK (self) -->
-      <div class="card-section" id="filterSelf" style="display:none">
+      <!-- Filter: NIK self -->
+      <div class="card-section" id="filterSelf">
         <div class="filter-row">
           <div class="filter-group">
             <span class="filter-label">Your Employee ID (NIK)</span>
-            <input type="text" id="nikSelf" placeholder="e.g. 04401" maxlength="10" oninput="onNikSelf()" />
+            <input type="text" class="nik-input" id="nikSelf"
+                   placeholder="e.g. 04401" maxlength="10" oninput="onNikSelf()" />
           </div>
         </div>
       </div>
 
-      <!-- Filter: NIK (team) -->
+      <!-- Filter: NIK team -->
       <div class="card-section" id="filterTeam" style="display:none">
         <div class="filter-row">
           <div class="filter-group">
             <span class="filter-label">Your Employee ID (NIK)</span>
-            <input type="text" id="nikTeam" placeholder="e.g. 04401" maxlength="10" oninput="onNikTeam()" />
+            <input type="text" class="nik-input" id="nikTeam"
+                   placeholder="e.g. 04401" maxlength="10" oninput="onNikTeam()" />
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Dept result -->
-    <div class="card" id="deptCard" style="display:none">
-      <div class="card-section">
-        <div class="stats-row">
-          <div class="stat-card"><div class="stat-label">Total Employees</div><div class="stat-value" id="sTotal">0</div></div>
-          <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="sComplete" style="color:var(--green-fg)">0</div></div>
-          <div class="stat-card"><div class="stat-label">On Progress</div><div class="stat-value" id="sProgress" style="color:var(--blue-fg)">0</div></div>
-          <div class="stat-card"><div class="stat-label">Not Started</div><div class="stat-value" id="sNone" style="color:var(--gray-fg)">0</div></div>
-          <div class="stat-card"><div class="stat-label">Avg. Progress</div><div class="stat-value" id="sAvg">0%</div></div>
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th class="col-no">#</th>
-              <th class="col-nik">NIK</th>
-              <th class="col-name">Employee Name</th>
-              <th class="col-prog">Progress</th>
-              <th class="col-stat">Status</th>
-              <th class="col-rem">Incomplete Training</th>
-            </tr>
-          </thead>
-          <tbody id="deptBody"></tbody>
-        </table>
-        <div id="emptyDept" class="empty-state" style="display:none">No data for this department.</div>
-      </div>
-      <div class="pagination" id="deptPg" style="display:none">
-        <span class="pg-info" id="deptPgInfo"></span>
-        <button class="pg-btn" id="deptPgPrev" onclick="changePage('dept',-1)">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Previous
-        </button>
-        <button class="pg-btn" id="deptPgNext" onclick="changePage('dept',1)">
-          Next<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
-        </button>
       </div>
     </div>
 
@@ -366,15 +399,19 @@
           </thead>
           <tbody id="teamBody"></tbody>
         </table>
-        <div id="emptyTeam" class="empty-state" style="display:none">No team members found under your NIK.</div>
+        <div id="emptyTeam" class="empty-state" style="display:none">
+          No team members found under your NIK.
+        </div>
       </div>
       <div class="pagination" id="teamPg" style="display:none">
         <span class="pg-info" id="teamPgInfo"></span>
-        <button class="pg-btn" id="teamPgPrev" onclick="changePage('team',-1)">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Previous
+        <button class="pg-btn" id="teamPgPrev" onclick="changePage(-1)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+          Previous
         </button>
-        <button class="pg-btn" id="teamPgNext" onclick="changePage('team',1)">
-          Next<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
+        <button class="pg-btn" id="teamPgNext" onclick="changePage(1)">
+          Next
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
         </button>
       </div>
     </div>
@@ -388,9 +425,8 @@
 // ============================================================
 var allData      = [];
 var deptList     = [];
-var deptFiltered = [];
+var activeDept   = "";
 var teamFiltered = [];
-var deptPage     = 1;
 var teamPage     = 1;
 var PAGE_SIZE    = 25;
 var selfTimer    = null;
@@ -411,22 +447,22 @@ function fetchData() {
       if (data.error) throw new Error(data.error);
       allData  = data.employees  || [];
       deptList = data.departments || [];
-      initApp();
+      initGate();
     })
     .catch(function(err) {
       document.getElementById('loadingCard').style.display = 'none';
       document.getElementById('errorCard').style.display  = 'block';
       document.getElementById('errorMsg').textContent =
         'Failed to load data: ' + err.message +
-        '. Make sure the Apps Script URL is correct and deployment access is set to "Anyone".';
+        '. Ensure the Apps Script URL is correct and access is set to "Anyone".';
     });
 }
 
-function initApp() {
+function initGate() {
   document.getElementById('loadingCard').style.display = 'none';
-  document.getElementById('mainApp').style.display     = 'block';
+  document.getElementById('gateCard').style.display    = 'block';
 
-  var sel = document.getElementById('deptSelect');
+  var sel = document.getElementById('gateDept');
   deptList.forEach(function(d) {
     var o = document.createElement('option');
     o.value = d; o.textContent = d;
@@ -435,55 +471,105 @@ function initApp() {
 }
 
 // ============================================================
+// GATE LOGIC
+// ============================================================
+function onGateDeptChange() {
+  var dept = document.getElementById('gateDept').value;
+  var pwGroup  = document.getElementById('passwordGroup');
+  var submitBtn = document.getElementById('submitBtn');
+  var pwError  = document.getElementById('pwError');
+
+  document.getElementById('gatePassword').value = '';
+  pwError.style.display = 'none';
+
+  if (dept) {
+    pwGroup.style.display   = 'flex';
+    pwGroup.style.flexDirection = 'column';
+    submitBtn.style.display = 'inline-flex';
+    document.getElementById('gatePassword').focus();
+  } else {
+    pwGroup.style.display   = 'none';
+    submitBtn.style.display = 'none';
+  }
+}
+
+function submitPassword() {
+  var dept     = document.getElementById('gateDept').value;
+  var password = document.getElementById('gatePassword').value.trim();
+  var pwError  = document.getElementById('pwError');
+  var submitBtn = document.getElementById('submitBtn');
+
+  if (!dept || !password) return;
+
+  pwError.style.display = 'none';
+  submitBtn.disabled    = true;
+  submitBtn.innerHTML   = '<div class="spinner-sm"></div> Verifying...';
+
+  var url = APPS_SCRIPT_URL +
+    '?action=verifyPassword' +
+    '&dept='     + encodeURIComponent(dept) +
+    '&password=' + encodeURIComponent(password);
+
+  fetch(url)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      if (data.success) {
+        activeDept = dept;
+        openMainApp();
+      } else {
+        pwError.textContent   = data.message || 'Incorrect access code. Please try again.';
+        pwError.style.display = 'block';
+        document.getElementById('gatePassword').value = '';
+        document.getElementById('gatePassword').focus();
+      }
+    })
+    .catch(function(err) {
+      pwError.textContent   = 'Verification failed: ' + err.message;
+      pwError.style.display = 'block';
+    })
+    .finally(function() {
+      submitBtn.disabled  = false;
+      submitBtn.innerHTML = 'Continue';
+    });
+}
+
+function openMainApp() {
+  document.getElementById('gateCard').style.display  = 'none';
+  document.getElementById('mainApp').style.display   = 'block';
+  document.getElementById('activeDeptLabel').textContent = activeDept;
+
+  // Reset UI state
+  setMode('self');
+  document.getElementById('nikSelf').value = '';
+  document.getElementById('nikTeam').value = '';
+  document.getElementById('selfCard').style.display = 'none';
+  document.getElementById('teamCard').style.display = 'none';
+}
+
+function resetToGate() {
+  activeDept = '';
+  document.getElementById('mainApp').style.display  = 'none';
+  document.getElementById('gateCard').style.display = 'block';
+  document.getElementById('gateDept').value         = '';
+  document.getElementById('gatePassword').value     = '';
+  document.getElementById('passwordGroup').style.display = 'none';
+  document.getElementById('submitBtn').style.display     = 'none';
+  document.getElementById('pwError').style.display       = 'none';
+}
+
+// ============================================================
 // MODE TOGGLE
 // ============================================================
 function setMode(m) {
-  ['dept','self','team'].forEach(function(id) {
-    var cap = id.charAt(0).toUpperCase() + id.slice(1);
-    document.getElementById('btn'    + cap).classList.remove('active');
-    document.getElementById('filter' + cap).style.display = 'none';
-  });
-  var capM = m.charAt(0).toUpperCase() + m.slice(1);
-  document.getElementById('btn'    + capM).classList.add('active');
-  document.getElementById('filter' + capM).style.display = 'block';
-
-  document.getElementById('deptCard').style.display = 'none';
-  document.getElementById('selfCard').style.display = 'none';
-  document.getElementById('teamCard').style.display = 'none';
-
-  if (m === 'dept') document.getElementById('deptSelect').value = '';
-  if (m === 'self') document.getElementById('nikSelf').value    = '';
-  if (m === 'team') document.getElementById('nikTeam').value    = '';
-}
-
-// ============================================================
-// DEPT MODE
-// ============================================================
-function onDeptChange() {
-  var dept = document.getElementById('deptSelect').value;
-  if (!dept) { document.getElementById('deptCard').style.display = 'none'; return; }
-  deptFiltered = allData.filter(function(d) { return d.dept === dept; });
-  deptPage = 1;
-  renderSummary(deptFiltered);
-  renderDeptTable();
-  document.getElementById('deptCard').style.display = 'block';
-}
-
-function renderSummary(data) {
-  var total    = data.length;
-  var complete = data.filter(function(d) { return d.progress >= 100; }).length;
-  var prog     = data.filter(function(d) { return d.progress > 0 && d.progress < 100; }).length;
-  var none     = data.filter(function(d) { return d.progress === 0; }).length;
-  var avg      = total ? Math.round(data.reduce(function(s,d) { return s + d.progress; }, 0) / total) : 0;
-  document.getElementById('sTotal').textContent    = total;
-  document.getElementById('sComplete').textContent = complete;
-  document.getElementById('sProgress').textContent = prog;
-  document.getElementById('sNone').textContent     = none;
-  document.getElementById('sAvg').textContent      = avg + '%';
-}
-
-function renderDeptTable() {
-  renderTable(deptFiltered, deptPage, 'dept', false);
+  document.getElementById('btnSelf').classList.toggle('active', m === 'self');
+  document.getElementById('btnTeam').classList.toggle('active', m === 'team');
+  document.getElementById('filterSelf').style.display = m === 'self' ? 'block' : 'none';
+  document.getElementById('filterTeam').style.display = m === 'team' ? 'block' : 'none';
+  document.getElementById('selfCard').style.display   = 'none';
+  document.getElementById('teamCard').style.display   = 'none';
+  if (m === 'self') document.getElementById('nikSelf').value = '';
+  if (m === 'team') document.getElementById('nikTeam').value = '';
 }
 
 // ============================================================
@@ -495,11 +581,23 @@ function onNikSelf() {
     var nik  = document.getElementById('nikSelf').value.trim();
     var card = document.getElementById('selfCard');
     if (nik.length < 3) { card.style.display = 'none'; return; }
-    var person = allData.find(function(d) { return d.nik === nik; });
+
+    // Filter by active department — NIK must belong to this dept
+    var person = allData.find(function(d) {
+      return d.nik === nik && d.dept === activeDept;
+    });
+
     card.style.display = 'block';
+
     if (!person) {
+      // Check if NIK exists but in different dept
+      var exists = allData.find(function(d) { return d.nik === nik; });
       document.getElementById('selfContent').innerHTML =
-        '<div class="empty-state">Employee ID not found. Please check your NIK.</div>';
+        '<div class="empty-state">' +
+          (exists
+            ? 'This NIK does not belong to the ' + esc(activeDept) + ' department.'
+            : 'Employee ID not found. Please check your NIK.') +
+        '</div>';
       return;
     }
     renderSelfView(person);
@@ -507,8 +605,8 @@ function onNikSelf() {
 }
 
 function renderSelfView(p) {
-  var color  = pColor(p.progress);
-  var tags   = parseTags(p.notCompleted);
+  var color = pColor(p.progress);
+  var tags  = parseTags(p.notCompleted);
 
   var trainingHtml = '';
   if (p.progress >= 100) {
@@ -563,27 +661,30 @@ function onNikTeam() {
     var card = document.getElementById('teamCard');
     if (nik.length < 3) { card.style.display = 'none'; return; }
 
-    var manager = allData.find(function(d) { return d.nik === nik; });
+    // Manager must belong to active department
+    var manager = allData.find(function(d) {
+      return d.nik === nik && d.dept === activeDept;
+    });
+
+    card.style.display = 'block';
+
     if (!manager) {
-      card.style.display = 'block';
+      var exists = allData.find(function(d) { return d.nik === nik; });
       document.getElementById('teamHeader').innerHTML =
-        '<div class="empty-state">Employee ID not found. Please check your NIK.</div>';
+        '<div class="empty-state">' +
+          (exists
+            ? 'This NIK does not belong to the ' + esc(activeDept) + ' department.'
+            : 'Employee ID not found. Please check your NIK.') +
+        '</div>';
       document.getElementById('teamBody').innerHTML = '';
       document.getElementById('emptyTeam').style.display = 'none';
       document.getElementById('teamPg').style.display    = 'none';
       return;
     }
 
-    // Build name→employee map for fast lookup
-    var nameMap = {};
-    allData.forEach(function(d) {
-      if (d.name) nameMap[d.name.toLowerCase()] = d;
-    });
-
-    // Recursive traversal — collect all reports under manager
-    // Each entry gets a `level` and `reportsTo` (direct supervisor name)
+    // Recursive traversal — all reports regardless of department
     teamFiltered = [];
-    collectReports(manager.name, nameMap, 1, manager.name);
+    collectReports(manager.name, 1);
     teamFiltered.sort(function(a, b) {
       if (a.level !== b.level) return a.level - b.level;
       return a.name.localeCompare(b.name, 'id');
@@ -591,7 +692,6 @@ function onNikTeam() {
 
     teamPage = 1;
 
-    // Summary
     var total    = teamFiltered.length;
     var complete = teamFiltered.filter(function(d) { return d.progress >= 100; }).length;
     var prog     = teamFiltered.filter(function(d) { return d.progress > 0 && d.progress < 100; }).length;
@@ -603,8 +703,8 @@ function onNikTeam() {
         '<div class="avatar avatar-teal">' + esc(initials(manager.name)) + '</div>' +
         '<div>' +
           '<div class="profile-name">' + esc(manager.name) + '</div>' +
-          '<div class="profile-meta">NIK ' + esc(manager.nik) + ' &nbsp;·&nbsp; ' + esc(manager.dept) +
-            ' &nbsp;·&nbsp; ' + total + ' team member' + (total !== 1 ? 's' : '') + '</div>' +
+          '<div class="profile-meta">NIK ' + esc(manager.nik) + ' &nbsp;·&nbsp; ' +
+            total + ' team member' + (total !== 1 ? 's' : '') + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="stats-row">' +
@@ -616,49 +716,30 @@ function onNikTeam() {
       '</div>';
 
     renderTeamTable();
-    card.style.display = 'block';
   }, 300);
 }
 
-// Recursive: find all employees whose SPV = managerName, then recurse into each
-function collectReports(managerName, nameMap, level, directSpvName) {
+function collectReports(managerName, level) {
   var reports = allData.filter(function(d) {
     return d.spv && d.spv.toLowerCase() === managerName.toLowerCase();
   });
   reports.forEach(function(emp) {
-    // Avoid infinite loops (self-referencing SPV)
-    var alreadyAdded = teamFiltered.find(function(x) { return x.nik === emp.nik; });
-    if (alreadyAdded) return;
+    var already = teamFiltered.find(function(x) { return x.nik === emp.nik; });
+    if (already) return;
     teamFiltered.push({
-      nik: emp.nik,
-      name: emp.name,
-      dept: emp.dept,
-      spv: emp.spv,
-      notCompleted: emp.notCompleted,
-      status: emp.status,
-      progress: emp.progress,
-      level: level,
-      reportsTo: emp.spv
+      nik: emp.nik, name: emp.name, dept: emp.dept, spv: emp.spv,
+      notCompleted: emp.notCompleted, status: emp.status,
+      progress: emp.progress, level: level, reportsTo: emp.spv
     });
-    collectReports(emp.name, nameMap, level + 1, emp.name);
+    collectReports(emp.name, level + 1);
   });
 }
 
 function renderTeamTable() {
-  renderTable(teamFiltered, teamPage, 'team', true);
-}
-
-// ============================================================
-// SHARED TABLE RENDERER
-// ============================================================
-function renderTable(data, page, prefix, showTeamCols) {
-  var body    = document.getElementById(prefix + 'Body');
-  var emptyEl = document.getElementById('empty' + prefix.charAt(0).toUpperCase() + prefix.slice(1));
-  var pgBar   = document.getElementById(prefix + 'Pg');
-  var pgInfo  = document.getElementById(prefix + 'PgInfo');
-  var pgPrev  = document.getElementById(prefix + 'PgPrev');
-  var pgNext  = document.getElementById(prefix + 'PgNext');
-  var total   = data.length;
+  var body    = document.getElementById('teamBody');
+  var emptyEl = document.getElementById('emptyTeam');
+  var pgBar   = document.getElementById('teamPg');
+  var total   = teamFiltered.length;
 
   if (total === 0) {
     body.innerHTML = '';
@@ -668,27 +749,22 @@ function renderTable(data, page, prefix, showTeamCols) {
   }
   emptyEl.style.display = 'none';
 
-  var start = (page - 1) * PAGE_SIZE;
+  var start = (teamPage - 1) * PAGE_SIZE;
   var end   = Math.min(start + PAGE_SIZE, total);
-  var rows  = data.slice(start, end);
 
-  body.innerHTML = rows.map(function(d, i) {
+  body.innerHTML = teamFiltered.slice(start, end).map(function(d, i) {
     var color    = pColor(d.progress);
     var tags     = parseTags(d.notCompleted);
     var tagsHtml = tags.length
       ? tags.map(function(t) { return tagHtml(t); }).join('')
       : '<span style="font-size:12px;color:var(--text-3)">—</span>';
 
-    var teamCols = showTeamCols
-      ? '<td class="col-dept" style="font-size:12px;color:var(--text-2)">' + esc(d.dept) + '</td>' +
-        '<td class="col-lvl">' + levelBadge(d.level, d.reportsTo) + '</td>'
-      : '';
-
     return '<tr>' +
       '<td class="col-no" style="font-size:12px;color:var(--text-3)">' + (start + i + 1) + '</td>' +
       '<td class="col-nik" style="font-size:12px;color:var(--text-2)">' + esc(d.nik) + '</td>' +
       '<td class="col-name"><div class="emp-name">' + esc(d.name) + '</div></td>' +
-      teamCols +
+      '<td class="col-dept" style="font-size:12px;color:var(--text-2)">' + esc(d.dept) + '</td>' +
+      '<td class="col-lvl">' + levelBadge(d.level, d.reportsTo) + '</td>' +
       '<td class="col-prog">' +
         '<div class="pbar-wrap"><div class="pbar-fill" style="width:' + d.progress + '%;background:' + color + '"></div></div>' +
         '<div class="pbar-pct">' + d.progress + '%</div>' +
@@ -699,20 +775,17 @@ function renderTable(data, page, prefix, showTeamCols) {
   }).join('');
 
   var totalPages = Math.ceil(total / PAGE_SIZE);
-  pgInfo.textContent = 'Showing ' + (start + 1) + '–' + end + ' of ' + total + ' employees';
-  pgPrev.disabled    = page <= 1;
-  pgNext.disabled    = page >= totalPages;
+  document.getElementById('teamPgInfo').textContent =
+    'Showing ' + (start + 1) + '–' + end + ' of ' + total + ' employees';
+  document.getElementById('teamPgPrev').disabled = teamPage <= 1;
+  document.getElementById('teamPgNext').disabled = teamPage >= totalPages;
   pgBar.style.display = total > PAGE_SIZE ? 'flex' : 'none';
 }
 
-function changePage(prefix, dir) {
-  if (prefix === 'dept') {
-    deptPage = Math.max(1, Math.min(Math.ceil(deptFiltered.length / PAGE_SIZE), deptPage + dir));
-    renderDeptTable();
-  } else {
-    teamPage = Math.max(1, Math.min(Math.ceil(teamFiltered.length / PAGE_SIZE), teamPage + dir));
-    renderTeamTable();
-  }
+function changePage(dir) {
+  var totalPages = Math.ceil(teamFiltered.length / PAGE_SIZE);
+  teamPage = Math.max(1, Math.min(totalPages, teamPage + dir));
+  renderTeamTable();
 }
 
 // ============================================================
@@ -732,7 +805,7 @@ function statusBadge(pct) {
 }
 
 function levelBadge(level, reportsTo) {
-  var cls = level === 1 ? 'lvl-1' : level === 2 ? 'lvl-2' : level === 3 ? 'lvl-3' : 'lvl-n';
+  var cls   = level === 1 ? 'lvl-1' : level === 2 ? 'lvl-2' : level === 3 ? 'lvl-3' : 'lvl-n';
   var label = level === 1 ? 'Direct Report' : 'L' + level + ' — ' + esc(reportsTo || '');
   return '<span class="lvl-badge ' + cls + '">' + label + '</span>';
 }
