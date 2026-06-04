@@ -31,6 +31,7 @@
       --red-bg:    #FCEBEB; --red-fg:   #A32D2D;
       --gray-bg:   #F1EFE8; --gray-fg:  #5F5E5A;
       --coral-bg:  #FAECE7; --coral-fg: #993C1D;
+      --teal-bg:   #E1F5EE; --teal-fg:  #0F6E56;
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 14px;
@@ -45,26 +46,12 @@
       padding: 1.5rem 1rem 4rem;
     }
 
-    /* ---- Layout ---- */
-    .container { max-width: 900px; margin: 0 auto; }
+    .container { max-width: 960px; margin: 0 auto; }
 
-    /* ---- Header ---- */
-    .page-header {
-      margin-bottom: 1.5rem;
-    }
-    .page-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-1);
-      letter-spacing: -0.3px;
-    }
-    .page-sub {
-      font-size: 13px;
-      color: var(--text-2);
-      margin-top: 3px;
-    }
+    .page-header { margin-bottom: 1.5rem; }
+    .page-title  { font-size: 20px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; }
+    .page-sub    { font-size: 13px; color: var(--text-2); margin-top: 3px; }
 
-    /* ---- Card ---- */
     .card {
       background: var(--surface);
       border: 0.5px solid var(--border);
@@ -78,7 +65,7 @@
     }
     .card-section:last-child { border-bottom: none; }
 
-    /* ---- Mode toggle ---- */
+    /* Mode toggle — 3 tabs */
     .mode-wrap {
       display: flex;
       gap: 0;
@@ -90,30 +77,28 @@
     .mode-btn {
       background: transparent;
       border: none;
+      border-right: 0.5px solid var(--border-md);
       padding: 7px 16px;
       font-size: 13px;
       font-family: var(--font);
       cursor: pointer;
       color: var(--text-2);
       transition: background 0.15s;
+      white-space: nowrap;
     }
+    .mode-btn:last-child { border-right: none; }
     .mode-btn.active {
       background: var(--bg);
       color: var(--text-1);
       font-weight: 500;
     }
 
-    /* ---- Filter ---- */
-    .filter-row {
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
-      flex-wrap: wrap;
-    }
+    .filter-row  { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
     .filter-group { display: flex; flex-direction: column; gap: 4px; }
     .filter-label { font-size: 11px; color: var(--text-3); letter-spacing: 0.4px; }
+
     select, input[type="text"] {
-      min-width: 200px;
+      min-width: 220px;
       padding: 8px 10px;
       font-size: 14px;
       font-family: var(--font);
@@ -124,33 +109,22 @@
       outline: none;
       transition: border-color 0.15s;
     }
-    select:focus, input[type="text"]:focus {
-      border-color: #185FA5;
-    }
+    select:focus, input[type="text"]:focus { border-color: #185FA5; }
     select:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* ---- Summary stats ---- */
+    /* Summary stats */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 10px;
     }
-    .stat-card {
-      background: var(--bg);
-      border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
-    }
+    .stat-card { background: var(--bg); border-radius: var(--radius-md); padding: 0.75rem 1rem; }
     .stat-label { font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
     .stat-value { font-size: 22px; font-weight: 600; color: var(--text-1); }
 
-    /* ---- Table ---- */
+    /* Table */
     .table-wrap { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      table-layout: fixed;
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
     th {
       text-align: left;
       font-size: 11px;
@@ -169,168 +143,122 @@
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--bg); }
 
-    .col-no    { width: 36px; }
-    .col-nik   { width: 70px; }
-    .col-name  { width: 200px; }
-    .col-prog  { width: 130px; }
-    .col-stat  { width: 90px; }
-    .col-rem   { /* flexible */ }
+    .col-no   { width: 36px; }
+    .col-nik  { width: 70px; }
+    .col-name { width: 190px; }
+    .col-dept { width: 160px; }
+    .col-prog { width: 120px; }
+    .col-stat { width: 90px; }
+    .col-rem  { /* flexible */ }
 
     .emp-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .emp-nik  { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+    .emp-sub  { font-size: 11px; color: var(--text-3); margin-top: 1px; }
 
-    /* ---- Progress bar ---- */
-    .pbar-wrap {
-      background: var(--border);
-      border-radius: 99px;
-      height: 5px;
-      width: 100%;
-      margin-bottom: 3px;
-    }
+    .pbar-wrap { background: var(--border); border-radius: 99px; height: 5px; width: 100%; margin-bottom: 3px; }
     .pbar-fill { height: 5px; border-radius: 99px; }
     .pbar-pct  { font-size: 11px; color: var(--text-2); }
 
-    /* ---- Badges ---- */
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 99px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
+    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; white-space: nowrap; }
     .b-complete { background: var(--green-bg); color: var(--green-fg); }
     .b-progress { background: var(--blue-bg);  color: var(--blue-fg); }
     .b-none     { background: var(--gray-bg);  color: var(--gray-fg); }
 
-    /* ---- Training tags ---- */
     .tag-list { display: flex; flex-wrap: wrap; gap: 5px; }
     .tag-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 99px;
-      background: var(--coral-bg);
-      color: var(--coral-fg);
-      white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; padding: 3px 8px; border-radius: 99px;
+      background: var(--coral-bg); color: var(--coral-fg); white-space: nowrap;
     }
     .tag-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      font-size: 10px;
-      font-weight: 500;
-      padding: 1px 5px;
-      border-radius: 99px;
-      background: var(--coral-fg);
-      color: #fff;
-      text-decoration: none;
-      transition: opacity 0.15s;
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 500; padding: 1px 5px; border-radius: 99px;
+      background: var(--coral-fg); color: #fff; text-decoration: none; transition: opacity 0.15s;
     }
     .tag-link:hover { opacity: 0.8; }
     .tag-link svg { width: 9px; height: 9px; flex-shrink: 0; }
 
-    /* ---- Self view ---- */
+    /* Self view */
     .self-avatar {
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      background: var(--blue-bg);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 600; color: var(--blue-fg);
-      flex-shrink: 0;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--blue-bg); display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 600; color: var(--blue-fg); flex-shrink: 0;
     }
-    .self-header { display: flex; align-items: center; gap: 14px; }
-    .self-name   { font-size: 16px; font-weight: 600; color: var(--text-1); }
-    .self-meta   { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+    .spv-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--teal-bg); display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 600; color: var(--teal-fg); flex-shrink: 0;
+    }
+    .self-header  { display: flex; align-items: center; gap: 14px; }
+    .self-name    { font-size: 16px; font-weight: 600; color: var(--text-1); }
+    .self-meta    { font-size: 13px; color: var(--text-2); margin-top: 2px; }
 
-    .prog-big-wrap {
-      background: var(--bg);
-      border-radius: var(--radius-md);
-      padding: 1.1rem 1.25rem;
-    }
+    .prog-big-wrap  { background: var(--bg); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; }
     .prog-big-label { font-size: 11px; color: var(--text-2); margin-bottom: 8px; }
     .prog-big-pct   { font-size: 30px; font-weight: 700; margin-bottom: 6px; }
-    .prog-big-bar-wrap {
-      background: var(--border);
-      border-radius: 99px;
-      height: 8px;
-      width: 100%;
-    }
+    .prog-big-bar-wrap { background: var(--border); border-radius: 99px; height: 8px; width: 100%; }
     .prog-big-bar-fill { height: 8px; border-radius: 99px; transition: width 0.5s ease; }
-    .prog-big-note { font-size: 12px; color: var(--text-2); margin-top: 8px; }
+    .prog-big-note  { font-size: 12px; color: var(--text-2); margin-top: 8px; }
 
     .section-label { font-size: 11px; color: var(--text-2); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.3px; }
 
     .lms-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      font-family: var(--font);
-      font-weight: 500;
-      padding: 9px 16px;
-      border-radius: var(--radius-sm);
-      background: #185FA5;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.15s;
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 13px; font-family: var(--font); font-weight: 500;
+      padding: 9px 16px; border-radius: var(--radius-sm);
+      background: #185FA5; color: #fff; border: none; cursor: pointer;
+      text-decoration: none; transition: opacity 0.15s;
     }
     .lms-btn:hover { opacity: 0.88; }
     .lms-btn svg { width: 14px; height: 14px; }
 
-    /* ---- Pagination ---- */
-    .pagination {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 0.875rem 1.25rem;
-      border-top: 0.5px solid var(--border);
+    /* Team summary header */
+    .team-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem;
     }
+    .team-stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+    .team-stat {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.65rem 0.9rem;
+    }
+    .team-stat-lbl { font-size: 10px; color: var(--text-2); margin-bottom: 3px; }
+    .team-stat-val { font-size: 20px; font-weight: 600; color: var(--text-1); }
+
+    /* Pagination */
+    .pagination { display: flex; align-items: center; gap: 8px; padding: 0.875rem 1.25rem; border-top: 0.5px solid var(--border); }
     .pg-info { font-size: 12px; color: var(--text-2); flex: 1; }
     .pg-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: transparent;
-      border: 0.5px solid var(--border-md);
-      border-radius: var(--radius-sm);
-      padding: 6px 13px;
-      font-size: 13px;
-      font-family: var(--font);
-      cursor: pointer;
-      color: var(--text-1);
+      display: inline-flex; align-items: center; gap: 5px;
+      background: transparent; border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm); padding: 6px 13px;
+      font-size: 13px; font-family: var(--font); cursor: pointer; color: var(--text-1);
       transition: background 0.15s;
     }
     .pg-btn:hover:not(:disabled) { background: var(--bg); }
     .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .pg-btn svg { width: 14px; height: 14px; }
 
-    /* ---- Loading & empty states ---- */
+    /* States */
     .loading-state, .empty-state, .error-state {
-      text-align: center;
-      padding: 2.5rem 1rem;
-      font-size: 13px;
-      color: var(--text-2);
+      text-align: center; padding: 2.5rem 1rem; font-size: 13px; color: var(--text-2);
     }
     .error-state { color: var(--red-fg); }
     .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 2px solid var(--border-md);
-      border-top-color: #185FA5;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-bottom: 10px;
+      display: inline-block; width: 20px; height: 20px;
+      border: 2px solid var(--border-md); border-top-color: #185FA5;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ---- Responsive ---- */
-    @media (max-width: 600px) {
-      .col-name { width: 150px; }
+    @media (max-width: 640px) {
+      .mode-btn { padding: 7px 11px; font-size: 12px; }
+      .col-name { width: 140px; }
       .col-prog { width: 100px; }
       select, input[type="text"] { min-width: 160px; }
     }
@@ -339,13 +267,12 @@
 <body>
 <div class="container">
 
-  <!-- Header -->
   <div class="page-header">
     <div class="page-title">IDP Completion Tracker</div>
     <div class="page-sub">Mandatory Training — PT. Amerta Indah Otsuka</div>
   </div>
 
-  <!-- Loading awal -->
+  <!-- Loading -->
   <div class="card" id="loadingCard">
     <div class="card-section loading-state">
       <div class="spinner"></div>
@@ -353,150 +280,169 @@
     </div>
   </div>
 
-  <!-- Error state -->
+  <!-- Error -->
   <div class="card" id="errorCard" style="display:none">
     <div class="card-section error-state" id="errorMsg">Gagal memuat data.</div>
   </div>
 
-  <!-- Main app (tersembunyi sampai data berhasil dimuat) -->
+  <!-- Main app -->
   <div id="mainApp" style="display:none">
 
     <!-- Mode toggle + filter -->
     <div class="card">
-      <div class="card-section" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+      <div class="card-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
         <div class="mode-wrap">
           <button class="mode-btn active" id="btnDept" onclick="setMode('dept')">Filter by Department</button>
           <button class="mode-btn" id="btnSelf" onclick="setMode('self')">Check My Progress</button>
+          <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Check My Team Progress</button>
         </div>
       </div>
 
-      <!-- Filter department -->
+      <!-- Filter: Department -->
       <div class="card-section" id="filterDept">
         <div class="filter-row">
           <div class="filter-group">
             <span class="filter-label">Department</span>
             <select id="deptSelect" onchange="onDeptChange()">
-              <option value="">-- Pilih Department --</option>
+              <option value="">-- Select Department --</option>
             </select>
           </div>
         </div>
       </div>
 
-      <!-- Filter NIK -->
+      <!-- Filter: NIK -->
       <div class="card-section" id="filterSelf" style="display:none">
         <div class="filter-row">
           <div class="filter-group">
-            <span class="filter-label">Masukkan NIK kamu</span>
-            <input type="text" id="nikInput" placeholder="Contoh: 04401" maxlength="10" oninput="onNikInput()" />
+            <span class="filter-label">Your Employee ID (NIK)</span>
+            <input type="text" id="nikInput" placeholder="e.g. 04401" maxlength="10" oninput="onNikInput()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter: SPV -->
+      <div class="card-section" id="filterTeam" style="display:none">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">Select Your Name (as Supervisor)</span>
+            <select id="spvSelect" onchange="onSpvChange()">
+              <option value="">-- Select Supervisor --</option>
+            </select>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Summary stats (dept mode) -->
-    <div class="card" id="summaryCard" style="display:none">
+    <!-- Dept result -->
+    <div class="card" id="deptCard" style="display:none">
       <div class="card-section">
         <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-label">Total Karyawan</div>
-            <div class="stat-value" id="sTotal">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Completed</div>
-            <div class="stat-value" id="sComplete" style="color:var(--green-fg)">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">On Progress</div>
-            <div class="stat-value" id="sProgress" style="color:var(--blue-fg)">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Not Started</div>
-            <div class="stat-value" id="sNone" style="color:var(--gray-fg)">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Rata-rata Progress</div>
-            <div class="stat-value" id="sAvg">0%</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Total Employees</div><div class="stat-value" id="sTotal">0</div></div>
+          <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="sComplete" style="color:var(--green-fg)">0</div></div>
+          <div class="stat-card"><div class="stat-label">On Progress</div><div class="stat-value" id="sProgress" style="color:var(--blue-fg)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Not Started</div><div class="stat-value" id="sNone" style="color:var(--gray-fg)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Avg. Progress</div><div class="stat-value" id="sAvg">0%</div></div>
         </div>
       </div>
-
-      <!-- Table -->
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th class="col-no">#</th>
               <th class="col-nik">NIK</th>
-              <th class="col-name">Nama Karyawan</th>
+              <th class="col-name">Employee Name</th>
               <th class="col-prog">Progress</th>
               <th class="col-stat">Status</th>
-              <th class="col-rem">Training Belum Selesai</th>
+              <th class="col-rem">Incomplete Training</th>
             </tr>
           </thead>
-          <tbody id="tableBody"></tbody>
+          <tbody id="deptTableBody"></tbody>
         </table>
-        <div id="emptyDept" class="empty-state" style="display:none">Tidak ada data untuk department ini.</div>
+        <div id="emptyDept" class="empty-state" style="display:none">No data for this department.</div>
       </div>
-
-      <!-- Pagination -->
-      <div class="pagination" id="pgBar" style="display:none">
-        <span class="pg-info" id="pgInfo"></span>
-        <button class="pg-btn" id="pgPrev" onclick="changePage(-1)">
+      <div class="pagination" id="deptPgBar" style="display:none">
+        <span class="pg-info" id="deptPgInfo"></span>
+        <button class="pg-btn" id="deptPgPrev" onclick="changePage('dept',-1)">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
-          Sebelumnya
+          Previous
         </button>
-        <button class="pg-btn" id="pgNext" onclick="changePage(1)">
-          Berikutnya
+        <button class="pg-btn" id="deptPgNext" onclick="changePage('dept',1)">
+          Next
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- Self view card -->
+    <!-- Self result -->
     <div class="card" id="selfCard" style="display:none">
       <div class="card-section" id="selfContent"></div>
+    </div>
+
+    <!-- Team result -->
+    <div class="card" id="teamCard" style="display:none">
+      <div class="card-section" id="teamHeader"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">#</th>
+              <th class="col-nik">NIK</th>
+              <th class="col-name">Employee Name</th>
+              <th class="col-dept">Department</th>
+              <th class="col-prog">Progress</th>
+              <th class="col-stat">Status</th>
+              <th class="col-rem">Incomplete Training</th>
+            </tr>
+          </thead>
+          <tbody id="teamTableBody"></tbody>
+        </table>
+        <div id="emptyTeam" class="empty-state" style="display:none">No team members found for this supervisor.</div>
+      </div>
+      <div class="pagination" id="teamPgBar" style="display:none">
+        <span class="pg-info" id="teamPgInfo"></span>
+        <button class="pg-btn" id="teamPgPrev" onclick="changePage('team',-1)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+          Previous
+        </button>
+        <button class="pg-btn" id="teamPgNext" onclick="changePage('team',1)">
+          Next
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
     </div>
 
   </div><!-- /mainApp -->
 </div><!-- /container -->
 
 <script>
-// ============================================================
-// STATE
-// ============================================================
-var allData       = [];
-var deptList      = [];
-var filteredData  = [];
-var currentPage   = 1;
-var PAGE_SIZE     = 25;
-var currentMode   = 'dept';
-var nikTimer      = null;
+var allData      = [];
+var deptList     = [];
+var spvList      = [];
+var deptFiltered = [];
+var teamFiltered = [];
+var deptPage     = 1;
+var teamPage     = 1;
+var PAGE_SIZE    = 25;
+var nikTimer     = null;
 
-// ============================================================
-// INIT — fetch data dari Apps Script
-// ============================================================
-window.addEventListener('DOMContentLoaded', function () {
-  fetchData();
-});
+window.addEventListener('DOMContentLoaded', function () { fetchData(); });
 
 function fetchData() {
   fetch(APPS_SCRIPT_URL)
-    .then(function (res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    })
-    .then(function (data) {
+    .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+    .then(function(data) {
       if (data.error) throw new Error(data.error);
       allData  = data.employees || [];
       deptList = data.departments || [];
+      spvList  = data.spvList || [];
       initApp();
     })
-    .catch(function (err) {
+    .catch(function(err) {
       document.getElementById('loadingCard').style.display = 'none';
       document.getElementById('errorCard').style.display  = 'block';
       document.getElementById('errorMsg').textContent =
-        'Gagal memuat data: ' + err.message +
-        '. Pastikan URL Apps Script sudah benar dan deployment sudah diset "Anyone".';
+        'Failed to load data: ' + err.message +
+        '. Make sure the Apps Script URL is correct and deployment is set to "Anyone".';
     });
 }
 
@@ -504,55 +450,50 @@ function initApp() {
   document.getElementById('loadingCard').style.display = 'none';
   document.getElementById('mainApp').style.display     = 'block';
 
-  var sel = document.getElementById('deptSelect');
-  deptList.forEach(function (d) {
-    var o = document.createElement('option');
-    o.value = d; o.textContent = d;
-    sel.appendChild(o);
+  var dSel = document.getElementById('deptSelect');
+  deptList.forEach(function(d) {
+    var o = document.createElement('option'); o.value = d; o.textContent = d; dSel.appendChild(o);
+  });
+
+  var sSel = document.getElementById('spvSelect');
+  spvList.forEach(function(s) {
+    var o = document.createElement('option'); o.value = s; o.textContent = s; sSel.appendChild(o);
   });
 }
 
-// ============================================================
-// MODE TOGGLE
-// ============================================================
+// ---- MODE TOGGLE ----
 function setMode(m) {
-  currentMode = m;
-  document.getElementById('btnDept').classList.toggle('active', m === 'dept');
-  document.getElementById('btnSelf').classList.toggle('active', m === 'self');
-  document.getElementById('filterDept').style.display = m === 'dept' ? 'block' : 'none';
-  document.getElementById('filterSelf').style.display = m === 'self' ? 'block' : 'none';
-  document.getElementById('summaryCard').style.display = 'none';
-  document.getElementById('selfCard').style.display    = 'none';
-  if (m === 'dept') {
-    document.getElementById('deptSelect').value = '';
-  } else {
-    document.getElementById('nikInput').value = '';
-  }
+  ['dept','self','team'].forEach(function(id) {
+    document.getElementById('btn' + id.charAt(0).toUpperCase() + id.slice(1)).classList.remove('active');
+    document.getElementById('filter' + id.charAt(0).toUpperCase() + id.slice(1)).style.display = 'none';
+  });
+  document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1)).classList.add('active');
+  document.getElementById('filter' + m.charAt(0).toUpperCase() + m.slice(1)).style.display = 'block';
+  document.getElementById('deptCard').style.display = 'none';
+  document.getElementById('selfCard').style.display = 'none';
+  document.getElementById('teamCard').style.display = 'none';
+  if (m === 'dept') document.getElementById('deptSelect').value = '';
+  if (m === 'self') document.getElementById('nikInput').value   = '';
+  if (m === 'team') document.getElementById('spvSelect').value  = '';
 }
 
-// ============================================================
-// DEPT MODE
-// ============================================================
+// ---- DEPT MODE ----
 function onDeptChange() {
   var dept = document.getElementById('deptSelect').value;
-  if (!dept) {
-    document.getElementById('summaryCard').style.display = 'none';
-    return;
-  }
-  filteredData = allData.filter(function (d) { return d.dept === dept; });
-  currentPage  = 1;
-  renderSummary();
-  renderTable();
-  document.getElementById('summaryCard').style.display = 'block';
+  if (!dept) { document.getElementById('deptCard').style.display = 'none'; return; }
+  deptFiltered = allData.filter(function(d) { return d.dept === dept; });
+  deptPage = 1;
+  renderSummary(deptFiltered, 'dept');
+  renderTable(deptFiltered, deptPage, 'dept');
+  document.getElementById('deptCard').style.display = 'block';
 }
 
-function renderSummary() {
-  var total    = filteredData.length;
-  var complete = filteredData.filter(function (d) { return d.progress >= 100; }).length;
-  var prog     = filteredData.filter(function (d) { return d.progress > 0 && d.progress < 100; }).length;
-  var none     = filteredData.filter(function (d) { return d.progress === 0; }).length;
-  var avg      = total ? Math.round(filteredData.reduce(function (s, d) { return s + d.progress; }, 0) / total) : 0;
-
+function renderSummary(data, prefix) {
+  var total    = data.length;
+  var complete = data.filter(function(d) { return d.progress >= 100; }).length;
+  var prog     = data.filter(function(d) { return d.progress > 0 && d.progress < 100; }).length;
+  var none     = data.filter(function(d) { return d.progress === 0; }).length;
+  var avg      = total ? Math.round(data.reduce(function(s,d) { return s + d.progress; }, 0) / total) : 0;
   document.getElementById('sTotal').textContent    = total;
   document.getElementById('sComplete').textContent = complete;
   document.getElementById('sProgress').textContent = prog;
@@ -560,34 +501,138 @@ function renderSummary() {
   document.getElementById('sAvg').textContent      = avg + '%';
 }
 
-function renderTable() {
-  var body    = document.getElementById('tableBody');
-  var emptyEl = document.getElementById('emptyDept');
-  var total   = filteredData.length;
+// ---- SELF MODE ----
+function onNikInput() {
+  clearTimeout(nikTimer);
+  nikTimer = setTimeout(function() {
+    var nik      = document.getElementById('nikInput').value.trim();
+    var selfCard = document.getElementById('selfCard');
+    if (nik.length < 3) { selfCard.style.display = 'none'; return; }
+    var person = allData.find(function(d) { return d.nik === nik; });
+    selfCard.style.display = 'block';
+    if (!person) {
+      document.getElementById('selfContent').innerHTML =
+        '<div class="empty-state">Employee ID not found. Please check your NIK.</div>';
+      return;
+    }
+    renderSelfView(person);
+  }, 300);
+}
+
+function renderSelfView(person) {
+  var color  = pColor(person.progress);
+  var tags   = parseTags(person.notCompleted);
+  var initAv = initials(person.name);
+
+  var trainingHtml = '';
+  if (person.progress >= 100) {
+    trainingHtml = '<p style="font-size:13px;color:var(--green-fg);font-weight:500">All mandatory training has been completed.</p>';
+  } else if (tags.length === 0) {
+    trainingHtml = '<p style="font-size:13px;color:var(--text-2)">No incomplete training data available.</p>';
+  } else {
+    trainingHtml =
+      '<div class="tag-list" style="margin-bottom:1.25rem">' +
+        tags.map(function(t) { return '<span class="tag-item">' + esc(t) + '</span>'; }).join('') +
+      '</div>' +
+      '<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="lms-btn">' +
+        '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8z"/><path d="M8 5v3l2 1"/></svg>' +
+        'Open LMS Portal' +
+      '</a>';
+  }
+
+  document.getElementById('selfContent').innerHTML =
+    '<div class="self-header" style="margin-bottom:1.25rem">' +
+      '<div class="self-avatar">' + esc(initAv) + '</div>' +
+      '<div><div class="self-name">' + esc(person.name) + '</div>' +
+      '<div class="self-meta">NIK ' + esc(person.nik) + ' &nbsp;·&nbsp; ' + esc(person.dept) + '</div></div>' +
+    '</div>' +
+    '<div class="prog-big-wrap" style="margin-bottom:1.25rem">' +
+      '<div class="prog-big-label">Mandatory Training Progress</div>' +
+      '<div class="prog-big-pct" style="color:' + color + '">' + person.progress + '%</div>' +
+      '<div class="prog-big-bar-wrap"><div class="prog-big-bar-fill" style="width:' + person.progress + '%;background:' + color + '"></div></div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-top:10px">' +
+        statusBadge(person.progress) +
+        '<span style="font-size:12px;color:var(--text-2)">' +
+          (person.progress >= 100 ? 'All mandatory training completed.' : 'Complete the remaining training to reach 100%.') +
+        '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="section-label">Incomplete Training</div>' +
+    trainingHtml;
+}
+
+// ---- TEAM MODE ----
+function onSpvChange() {
+  var spv = document.getElementById('spvSelect').value;
+  if (!spv) { document.getElementById('teamCard').style.display = 'none'; return; }
+
+  teamFiltered = allData.filter(function(d) { return d.spv === spv; });
+  teamPage = 1;
+
+  var total    = teamFiltered.length;
+  var complete = teamFiltered.filter(function(d) { return d.progress >= 100; }).length;
+  var prog     = teamFiltered.filter(function(d) { return d.progress > 0 && d.progress < 100; }).length;
+  var none     = teamFiltered.filter(function(d) { return d.progress === 0; }).length;
+  var avg      = total ? Math.round(teamFiltered.reduce(function(s,d) { return s + d.progress; }, 0) / total) : 0;
+
+  document.getElementById('teamHeader').innerHTML =
+    '<div class="team-header">' +
+      '<div class="spv-avatar">' + esc(initials(spv)) + '</div>' +
+      '<div><div class="self-name">' + esc(spv) + '</div>' +
+      '<div class="self-meta">Supervisor &nbsp;·&nbsp; ' + total + ' direct report' + (total !== 1 ? 's' : '') + '</div></div>' +
+    '</div>' +
+    '<div class="team-stat-row">' +
+      '<div class="team-stat"><div class="team-stat-lbl">Total</div><div class="team-stat-val">' + total + '</div></div>' +
+      '<div class="team-stat"><div class="team-stat-lbl">Completed</div><div class="team-stat-val" style="color:var(--green-fg)">' + complete + '</div></div>' +
+      '<div class="team-stat"><div class="team-stat-lbl">On Progress</div><div class="team-stat-val" style="color:var(--blue-fg)">' + prog + '</div></div>' +
+      '<div class="team-stat"><div class="team-stat-lbl">Not Started</div><div class="team-stat-val" style="color:var(--gray-fg)">' + none + '</div></div>' +
+      '<div class="team-stat"><div class="team-stat-lbl">Avg. Progress</div><div class="team-stat-val">' + avg + '%</div></div>' +
+    '</div>';
+
+  renderTable(teamFiltered, teamPage, 'team');
+  document.getElementById('teamCard').style.display = 'block';
+}
+
+// ---- SHARED TABLE RENDERER ----
+function renderTable(data, page, prefix) {
+  var bodyId  = prefix + 'TableBody';
+  var emptyId = 'empty'   + prefix.charAt(0).toUpperCase() + prefix.slice(1);
+  var pgBarId = prefix    + 'PgBar';
+  var pgInfoId= prefix    + 'PgInfo';
+  var pgPrevId= prefix    + 'PgPrev';
+  var pgNextId= prefix    + 'PgNext';
+  var showDept = prefix === 'team';
+
+  var body  = document.getElementById(bodyId);
+  var empty = document.getElementById(emptyId);
+  var total = data.length;
 
   if (total === 0) {
     body.innerHTML = '';
-    emptyEl.style.display = 'block';
-    document.getElementById('pgBar').style.display = 'none';
+    empty.style.display = 'block';
+    document.getElementById(pgBarId).style.display = 'none';
     return;
   }
-  emptyEl.style.display = 'none';
+  empty.style.display = 'none';
 
-  var start   = (currentPage - 1) * PAGE_SIZE;
-  var end     = Math.min(start + PAGE_SIZE, total);
-  var rows    = filteredData.slice(start, end);
+  var start = (page - 1) * PAGE_SIZE;
+  var end   = Math.min(start + PAGE_SIZE, total);
+  var rows  = data.slice(start, end);
 
-  body.innerHTML = rows.map(function (d, i) {
-    var color   = progressColor(d.progress);
-    var tags    = parseTags(d.notCompleted);
+  body.innerHTML = rows.map(function(d, i) {
+    var color    = pColor(d.progress);
+    var tags     = parseTags(d.notCompleted);
     var tagsHtml = tags.length
-      ? tags.map(function (t) { return tagHtml(t); }).join('')
+      ? tags.map(function(t) { return tagHtml(t); }).join('')
       : '<span style="font-size:12px;color:var(--text-3)">—</span>';
-
+    var deptCell = showDept
+      ? '<td class="col-dept" style="font-size:12px;color:var(--text-2)">' + esc(d.dept) + '</td>'
+      : '';
     return '<tr>' +
       '<td class="col-no" style="font-size:12px;color:var(--text-3)">' + (start + i + 1) + '</td>' +
-      '<td class="col-nik" style="font-size:12px;color:var(--text-2)">' + escHtml(d.nik) + '</td>' +
-      '<td class="col-name"><div class="emp-name">' + escHtml(d.name) + '</div></td>' +
+      '<td class="col-nik" style="font-size:12px;color:var(--text-2)">' + esc(d.nik) + '</td>' +
+      '<td class="col-name"><div class="emp-name">' + esc(d.name) + '</div></td>' +
+      deptCell +
       '<td class="col-prog">' +
         '<div class="pbar-wrap"><div class="pbar-fill" style="width:' + d.progress + '%;background:' + color + '"></div></div>' +
         '<div class="pbar-pct">' + d.progress + '%</div>' +
@@ -598,101 +643,25 @@ function renderTable() {
   }).join('');
 
   var totalPages = Math.ceil(total / PAGE_SIZE);
-  document.getElementById('pgInfo').textContent =
-    'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total + ' karyawan';
-  document.getElementById('pgPrev').disabled = currentPage <= 1;
-  document.getElementById('pgNext').disabled = currentPage >= totalPages;
-  document.getElementById('pgBar').style.display = total > PAGE_SIZE ? 'flex' : 'none';
+  document.getElementById(pgInfoId).textContent =
+    'Showing ' + (start + 1) + '–' + end + ' of ' + total + ' employees';
+  document.getElementById(pgPrevId).disabled = page <= 1;
+  document.getElementById(pgNextId).disabled = page >= totalPages;
+  document.getElementById(pgBarId).style.display = total > PAGE_SIZE ? 'flex' : 'none';
 }
 
-function changePage(dir) {
-  var totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
-  currentPage = Math.max(1, Math.min(totalPages, currentPage + dir));
-  renderTable();
-}
-
-// ============================================================
-// SELF MODE
-// ============================================================
-function onNikInput() {
-  clearTimeout(nikTimer);
-  nikTimer = setTimeout(function () {
-    var nik    = document.getElementById('nikInput').value.trim();
-    var selfCard = document.getElementById('selfCard');
-
-    if (nik.length < 3) { selfCard.style.display = 'none'; return; }
-
-    var person = allData.find(function (d) { return d.nik === nik; });
-    selfCard.style.display = 'block';
-
-    if (!person) {
-      document.getElementById('selfContent').innerHTML =
-        '<div class="empty-state">NIK tidak ditemukan. Pastikan NIK sudah benar.</div>';
-      return;
-    }
-
-    renderSelfView(person);
-  }, 300);
-}
-
-function renderSelfView(person) {
-  var color  = progressColor(person.progress);
-  var tags   = parseTags(person.notCompleted);
-  var initAv = initials(person.name);
-
-  var trainingSection = '';
-  if (person.progress >= 100) {
-    trainingSection =
-      '<div class="section-label">Training yang belum diselesaikan</div>' +
-      '<p style="font-size:13px;color:var(--green-fg);font-weight:500">Semua mandatory training telah diselesaikan.</p>';
-  } else if (tags.length === 0) {
-    trainingSection =
-      '<div class="section-label">Training yang belum diselesaikan</div>' +
-      '<p style="font-size:13px;color:var(--text-2)">Tidak ada data training yang tersisa.</p>';
+function changePage(prefix, dir) {
+  if (prefix === 'dept') {
+    deptPage = Math.max(1, Math.min(Math.ceil(deptFiltered.length / PAGE_SIZE), deptPage + dir));
+    renderTable(deptFiltered, deptPage, 'dept');
   } else {
-    var tagItems = tags.map(function (t) {
-      return '<span class="tag-item">' + escHtml(t) + '</span>';
-    }).join('');
-
-    trainingSection =
-      '<div class="section-label">Training yang belum diselesaikan</div>' +
-      '<div class="tag-list" style="margin-bottom:1.25rem">' + tagItems + '</div>' +
-      '<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="lms-btn">' +
-        '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8z"/><path d="M8 5v3l2 1"/></svg>' +
-        'Buka Portal LMS' +
-      '</a>';
+    teamPage = Math.max(1, Math.min(Math.ceil(teamFiltered.length / PAGE_SIZE), teamPage + dir));
+    renderTable(teamFiltered, teamPage, 'team');
   }
-
-  var note = person.progress >= 100
-    ? 'Semua mandatory training telah diselesaikan.'
-    : 'Selesaikan training yang tersisa untuk mencapai 100%.';
-
-  document.getElementById('selfContent').innerHTML =
-    '<div class="self-header" style="margin-bottom:1.25rem">' +
-      '<div class="self-avatar">' + escHtml(initAv) + '</div>' +
-      '<div>' +
-        '<div class="self-name">' + escHtml(person.name) + '</div>' +
-        '<div class="self-meta">NIK ' + escHtml(person.nik) + ' &nbsp;·&nbsp; ' + escHtml(person.dept) + '</div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="prog-big-wrap" style="margin-bottom:1.25rem">' +
-      '<div class="prog-big-label">Progress Mandatory Training</div>' +
-      '<div class="prog-big-pct" style="color:' + color + '">' + person.progress + '%</div>' +
-      '<div class="prog-big-bar-wrap">' +
-        '<div class="prog-big-bar-fill" style="width:' + person.progress + '%;background:' + color + '"></div>' +
-      '</div>' +
-      '<div class="prog-big-note" style="display:flex;align-items:center;gap:8px;margin-top:10px">' +
-        statusBadge(person.progress) +
-        '<span>' + note + '</span>' +
-      '</div>' +
-    '</div>' +
-    trainingSection;
 }
 
-// ============================================================
-// HELPERS
-// ============================================================
-function progressColor(pct) {
+// ---- HELPERS ----
+function pColor(pct) {
   if (pct >= 100) return '#3B6D11';
   if (pct >= 70)  return '#185FA5';
   if (pct >= 40)  return '#BA7517';
@@ -707,18 +676,14 @@ function statusBadge(pct) {
 
 function parseTags(str) {
   if (!str || str.trim() === '') return [];
-  return str.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+  return str.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
 }
 
-// Tag dengan link LMS inline (tampilan tabel dept)
 function tagHtml(label) {
-  return '<span class="tag-item">' +
-    escHtml(label) +
+  return '<span class="tag-item">' + esc(label) +
     '&nbsp;<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="tag-link">' +
-      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>' +
-      'Buka' +
-    '</a>' +
-  '</span>';
+      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>Open' +
+    '</a></span>';
 }
 
 function initials(name) {
@@ -727,12 +692,9 @@ function initials(name) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function escHtml(str) {
+function esc(str) {
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 </body>
