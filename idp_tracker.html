@@ -1,103 +1,764 @@
-// File: idp-tracker.gs
-// Purpose: Google Apps Script backend untuk IDP Completion Tracker
-// Sheet: "Status"
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IDP Completion Tracker — AIO</title>
 
-var SHEET_NAME = "Status";
+  <!-- ================================================
+       KONFIGURASI — ubah dua nilai ini saja
+       ================================================ -->
+  <script>
+    var APPS_SCRIPT_URL = "PASTE_URL_DEPLOYMENT_APPS_SCRIPT_DI_SINI";
+    var LMS_URL         = "PASTE_URL_PORTAL_LMS_DI_SINI";
+  </script>
+  <!-- ================================================ -->
 
-var COL = {
-  NIK: 1,            // B
-  NAME: 2,           // C
-  DEPARTMENT: 5,     // F
-  SPV: 6,            // G
-  NOT_COMPLETED: 12, // M
-  STATUS: 14,        // O
-  PROGRESS: 15       // P
-};
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-function doGet(e) {
-  var action = e && e.parameter && e.parameter.action ? e.parameter.action : "getData";
-  var result;
-  try {
-    if (action === "getData") {
-      result = getData();
-    } else {
-      result = { error: "Unknown action: " + action };
+    :root {
+      --bg:        #F9F8F6;
+      --surface:   #FFFFFF;
+      --border:    rgba(0,0,0,0.08);
+      --border-md: rgba(0,0,0,0.14);
+      --text-1:    #1A1917;
+      --text-2:    #5F5E5A;
+      --text-3:    #888780;
+      --green-bg:  #EAF3DE; --green-fg: #3B6D11;
+      --blue-bg:   #E6F1FB; --blue-fg:  #185FA5;
+      --amber-bg:  #FAEEDA; --amber-fg: #854F0B;
+      --red-bg:    #FCEBEB; --red-fg:   #A32D2D;
+      --gray-bg:   #F1EFE8; --gray-fg:  #5F5E5A;
+      --coral-bg:  #FAECE7; --coral-fg: #993C1D;
+      --teal-bg:   #E1F5EE; --teal-fg:  #0F6E56;
+      --purple-bg: #F0EAFA; --purple-fg:#5B35A0;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
-  } catch (err) {
-    result = { error: err.message };
-  }
-  return ContentService
-    .createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON);
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    .container { max-width: 960px; margin: 0 auto; }
+
+    .page-header { margin-bottom: 1.5rem; }
+    .page-title  { font-size: 20px; font-weight: 600; color: var(--text-1); letter-spacing: -0.3px; }
+    .page-sub    { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .card-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .card-section:last-child { border-bottom: none; }
+
+    /* Mode toggle */
+    .mode-wrap {
+      display: flex;
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      width: fit-content;
+    }
+    .mode-btn {
+      background: transparent;
+      border: none;
+      border-right: 0.5px solid var(--border-md);
+      padding: 7px 16px;
+      font-size: 13px;
+      font-family: var(--font);
+      cursor: pointer;
+      color: var(--text-2);
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .mode-btn:last-child { border-right: none; }
+    .mode-btn.active { background: var(--bg); color: var(--text-1); font-weight: 500; }
+
+    .filter-row   { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-label { font-size: 11px; color: var(--text-3); letter-spacing: 0.4px; }
+
+    select, input[type="text"] {
+      min-width: 220px;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: var(--font);
+      border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text-1);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input[type="text"]:focus { border-color: #185FA5; }
+
+    /* Stats */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    .stat-card  { background: var(--bg); border-radius: var(--radius-md); padding: 0.75rem 1rem; }
+    .stat-label { font-size: 11px; color: var(--text-2); margin-bottom: 4px; }
+    .stat-value { font-size: 22px; font-weight: 600; color: var(--text-1); }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    th {
+      text-align: left; font-size: 11px; font-weight: 500; color: var(--text-2);
+      padding: 9px 12px; border-bottom: 0.5px solid var(--border);
+      white-space: nowrap; background: var(--bg);
+    }
+    td { padding: 11px 12px; border-bottom: 0.5px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--bg); }
+
+    .col-no   { width: 36px; }
+    .col-nik  { width: 70px; }
+    .col-name { width: 180px; }
+    .col-dept { width: 150px; }
+    .col-lvl  { width: 100px; }
+    .col-prog { width: 120px; }
+    .col-stat { width: 90px; }
+    .col-rem  { /* flexible */ }
+
+    .emp-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .pbar-wrap { background: var(--border); border-radius: 99px; height: 5px; width: 100%; margin-bottom: 3px; }
+    .pbar-fill { height: 5px; border-radius: 99px; }
+    .pbar-pct  { font-size: 11px; color: var(--text-2); }
+
+    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; white-space: nowrap; }
+    .b-complete { background: var(--green-bg); color: var(--green-fg); }
+    .b-progress { background: var(--blue-bg);  color: var(--blue-fg); }
+    .b-none     { background: var(--gray-bg);  color: var(--gray-fg); }
+
+    /* Level badge */
+    .lvl-badge {
+      display: inline-block; font-size: 10px; padding: 2px 7px;
+      border-radius: 99px; font-weight: 500; white-space: nowrap;
+    }
+    .lvl-1 { background: var(--teal-bg);   color: var(--teal-fg); }
+    .lvl-2 { background: var(--blue-bg);   color: var(--blue-fg); }
+    .lvl-3 { background: var(--purple-bg); color: var(--purple-fg); }
+    .lvl-n { background: var(--gray-bg);   color: var(--gray-fg); }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag-item {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; padding: 3px 8px; border-radius: 99px;
+      background: var(--coral-bg); color: var(--coral-fg); white-space: nowrap;
+    }
+    .tag-link {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 500; padding: 1px 5px; border-radius: 99px;
+      background: var(--coral-fg); color: #fff; text-decoration: none; transition: opacity 0.15s;
+    }
+    .tag-link:hover { opacity: 0.8; }
+    .tag-link svg { width: 9px; height: 9px; flex-shrink: 0; }
+
+    /* Self / Team profile header */
+    .profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
+    .avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 600; flex-shrink: 0;
+    }
+    .avatar-blue  { background: var(--blue-bg);  color: var(--blue-fg); }
+    .avatar-teal  { background: var(--teal-bg);  color: var(--teal-fg); }
+    .profile-name { font-size: 16px; font-weight: 600; color: var(--text-1); }
+    .profile-meta { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+
+    .prog-big-wrap      { background: var(--bg); border-radius: var(--radius-md); padding: 1.1rem 1.25rem; }
+    .prog-big-label     { font-size: 11px; color: var(--text-2); margin-bottom: 8px; }
+    .prog-big-pct       { font-size: 30px; font-weight: 700; margin-bottom: 6px; }
+    .prog-big-bar-wrap  { background: var(--border); border-radius: 99px; height: 8px; width: 100%; }
+    .prog-big-bar-fill  { height: 8px; border-radius: 99px; transition: width 0.5s ease; }
+
+    .section-label { font-size: 11px; color: var(--text-2); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.3px; }
+
+    .lms-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 13px; font-family: var(--font); font-weight: 500;
+      padding: 9px 16px; border-radius: var(--radius-sm);
+      background: #185FA5; color: #fff; border: none; cursor: pointer;
+      text-decoration: none; transition: opacity 0.15s;
+    }
+    .lms-btn:hover { opacity: 0.88; }
+    .lms-btn svg { width: 14px; height: 14px; }
+
+    /* Pagination */
+    .pagination { display: flex; align-items: center; gap: 8px; padding: 0.875rem 1.25rem; border-top: 0.5px solid var(--border); }
+    .pg-info { font-size: 12px; color: var(--text-2); flex: 1; }
+    .pg-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: transparent; border: 0.5px solid var(--border-md);
+      border-radius: var(--radius-sm); padding: 6px 13px;
+      font-size: 13px; font-family: var(--font); cursor: pointer; color: var(--text-1);
+      transition: background 0.15s;
+    }
+    .pg-btn:hover:not(:disabled) { background: var(--bg); }
+    .pg-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .pg-btn svg { width: 14px; height: 14px; }
+
+    /* States */
+    .loading-state, .empty-state, .error-state {
+      text-align: center; padding: 2.5rem 1rem; font-size: 13px; color: var(--text-2);
+    }
+    .error-state { color: var(--red-fg); }
+    .spinner {
+      display: inline-block; width: 20px; height: 20px;
+      border: 2px solid var(--border-md); border-top-color: #185FA5;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .mode-btn { padding: 7px 10px; font-size: 12px; }
+      .col-name { width: 130px; }
+      .col-prog { width: 100px; }
+      select, input[type="text"] { min-width: 160px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="page-title">IDP Completion Tracker</div>
+    <div class="page-sub">Mandatory Training — PT. Amerta Indah Otsuka</div>
+  </div>
+
+  <!-- Loading -->
+  <div class="card" id="loadingCard">
+    <div class="card-section loading-state">
+      <div class="spinner"></div>
+      <div>Loading data from spreadsheet...</div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="card" id="errorCard" style="display:none">
+    <div class="card-section error-state" id="errorMsg"></div>
+  </div>
+
+  <!-- Main app -->
+  <div id="mainApp" style="display:none">
+
+    <!-- Mode toggle + filters -->
+    <div class="card">
+      <div class="card-section" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div class="mode-wrap">
+          <button class="mode-btn active" id="btnDept" onclick="setMode('dept')">Filter by Department</button>
+          <button class="mode-btn" id="btnSelf" onclick="setMode('self')">Check My Progress</button>
+          <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Check My Team Progress</button>
+        </div>
+      </div>
+
+      <!-- Filter: Department -->
+      <div class="card-section" id="filterDept">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">Department</span>
+            <select id="deptSelect" onchange="onDeptChange()">
+              <option value="">-- Select Department --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter: NIK (self) -->
+      <div class="card-section" id="filterSelf" style="display:none">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">Your Employee ID (NIK)</span>
+            <input type="text" id="nikSelf" placeholder="e.g. 04401" maxlength="10" oninput="onNikSelf()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter: NIK (team) -->
+      <div class="card-section" id="filterTeam" style="display:none">
+        <div class="filter-row">
+          <div class="filter-group">
+            <span class="filter-label">Your Employee ID (NIK)</span>
+            <input type="text" id="nikTeam" placeholder="e.g. 04401" maxlength="10" oninput="onNikTeam()" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dept result -->
+    <div class="card" id="deptCard" style="display:none">
+      <div class="card-section">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Total Employees</div><div class="stat-value" id="sTotal">0</div></div>
+          <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" id="sComplete" style="color:var(--green-fg)">0</div></div>
+          <div class="stat-card"><div class="stat-label">On Progress</div><div class="stat-value" id="sProgress" style="color:var(--blue-fg)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Not Started</div><div class="stat-value" id="sNone" style="color:var(--gray-fg)">0</div></div>
+          <div class="stat-card"><div class="stat-label">Avg. Progress</div><div class="stat-value" id="sAvg">0%</div></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">#</th>
+              <th class="col-nik">NIK</th>
+              <th class="col-name">Employee Name</th>
+              <th class="col-prog">Progress</th>
+              <th class="col-stat">Status</th>
+              <th class="col-rem">Incomplete Training</th>
+            </tr>
+          </thead>
+          <tbody id="deptBody"></tbody>
+        </table>
+        <div id="emptyDept" class="empty-state" style="display:none">No data for this department.</div>
+      </div>
+      <div class="pagination" id="deptPg" style="display:none">
+        <span class="pg-info" id="deptPgInfo"></span>
+        <button class="pg-btn" id="deptPgPrev" onclick="changePage('dept',-1)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Previous
+        </button>
+        <button class="pg-btn" id="deptPgNext" onclick="changePage('dept',1)">
+          Next<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Self result -->
+    <div class="card" id="selfCard" style="display:none">
+      <div class="card-section" id="selfContent"></div>
+    </div>
+
+    <!-- Team result -->
+    <div class="card" id="teamCard" style="display:none">
+      <div class="card-section" id="teamHeader"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-no">#</th>
+              <th class="col-nik">NIK</th>
+              <th class="col-name">Employee Name</th>
+              <th class="col-dept">Department</th>
+              <th class="col-lvl">Reports To</th>
+              <th class="col-prog">Progress</th>
+              <th class="col-stat">Status</th>
+              <th class="col-rem">Incomplete Training</th>
+            </tr>
+          </thead>
+          <tbody id="teamBody"></tbody>
+        </table>
+        <div id="emptyTeam" class="empty-state" style="display:none">No team members found under your NIK.</div>
+      </div>
+      <div class="pagination" id="teamPg" style="display:none">
+        <span class="pg-info" id="teamPgInfo"></span>
+        <button class="pg-btn" id="teamPgPrev" onclick="changePage('team',-1)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>Previous
+        </button>
+        <button class="pg-btn" id="teamPgNext" onclick="changePage('team',1)">
+          Next<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /mainApp -->
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+var allData      = [];
+var deptList     = [];
+var deptFiltered = [];
+var teamFiltered = [];
+var deptPage     = 1;
+var teamPage     = 1;
+var PAGE_SIZE    = 25;
+var selfTimer    = null;
+var teamTimer    = null;
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', function() { fetchData(); });
+
+function fetchData() {
+  fetch(APPS_SCRIPT_URL)
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      allData  = data.employees  || [];
+      deptList = data.departments || [];
+      initApp();
+    })
+    .catch(function(err) {
+      document.getElementById('loadingCard').style.display = 'none';
+      document.getElementById('errorCard').style.display  = 'block';
+      document.getElementById('errorMsg').textContent =
+        'Failed to load data: ' + err.message +
+        '. Make sure the Apps Script URL is correct and deployment access is set to "Anyone".';
+    });
 }
 
-function getData() {
-  var ss    = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(SHEET_NAME);
+function initApp() {
+  document.getElementById('loadingCard').style.display = 'none';
+  document.getElementById('mainApp').style.display     = 'block';
 
-  if (!sheet) {
-    throw new Error("Sheet '" + SHEET_NAME + "' tidak ditemukan. Pastikan nama tab sudah benar.");
-  }
+  var sel = document.getElementById('deptSelect');
+  deptList.forEach(function(d) {
+    var o = document.createElement('option');
+    o.value = d; o.textContent = d;
+    sel.appendChild(o);
+  });
+}
 
-  var lastRow = sheet.getLastRow();
-  if (lastRow < 2) {
-    return { employees: [], departments: [] };
-  }
+// ============================================================
+// MODE TOGGLE
+// ============================================================
+function setMode(m) {
+  ['dept','self','team'].forEach(function(id) {
+    var cap = id.charAt(0).toUpperCase() + id.slice(1);
+    document.getElementById('btn'    + cap).classList.remove('active');
+    document.getElementById('filter' + cap).style.display = 'none';
+  });
+  var capM = m.charAt(0).toUpperCase() + m.slice(1);
+  document.getElementById('btn'    + capM).classList.add('active');
+  document.getElementById('filter' + capM).style.display = 'block';
 
-  var dataRange = sheet.getRange(2, 1, lastRow - 1, COL.PROGRESS + 1);
-  var values    = dataRange.getValues();
+  document.getElementById('deptCard').style.display = 'none';
+  document.getElementById('selfCard').style.display = 'none';
+  document.getElementById('teamCard').style.display = 'none';
 
-  var employees = [];
-  var deptSet   = {};
+  if (m === 'dept') document.getElementById('deptSelect').value = '';
+  if (m === 'self') document.getElementById('nikSelf').value    = '';
+  if (m === 'team') document.getElementById('nikTeam').value    = '';
+}
 
-  for (var i = 0; i < values.length; i++) {
-    var row = values[i];
+// ============================================================
+// DEPT MODE
+// ============================================================
+function onDeptChange() {
+  var dept = document.getElementById('deptSelect').value;
+  if (!dept) { document.getElementById('deptCard').style.display = 'none'; return; }
+  deptFiltered = allData.filter(function(d) { return d.dept === dept; });
+  deptPage = 1;
+  renderSummary(deptFiltered);
+  renderDeptTable();
+  document.getElementById('deptCard').style.display = 'block';
+}
 
-    var nik          = String(row[COL.NIK] || "").trim();
-    var name         = String(row[COL.NAME] || "").trim();
-    var dept         = String(row[COL.DEPARTMENT] || "").trim();
-    var spv          = String(row[COL.SPV] || "").trim();
-    var notCompleted = String(row[COL.NOT_COMPLETED] || "").trim();
-    var status       = String(row[COL.STATUS] || "").trim();
-    var progressRaw  = row[COL.PROGRESS];
+function renderSummary(data) {
+  var total    = data.length;
+  var complete = data.filter(function(d) { return d.progress >= 100; }).length;
+  var prog     = data.filter(function(d) { return d.progress > 0 && d.progress < 100; }).length;
+  var none     = data.filter(function(d) { return d.progress === 0; }).length;
+  var avg      = total ? Math.round(data.reduce(function(s,d) { return s + d.progress; }, 0) / total) : 0;
+  document.getElementById('sTotal').textContent    = total;
+  document.getElementById('sComplete').textContent = complete;
+  document.getElementById('sProgress').textContent = prog;
+  document.getElementById('sNone').textContent     = none;
+  document.getElementById('sAvg').textContent      = avg + '%';
+}
 
-    if (!nik && !name) continue;
+function renderDeptTable() {
+  renderTable(deptFiltered, deptPage, 'dept', false);
+}
 
-    var progress = 0;
-    if (typeof progressRaw === "number") {
-      progress = progressRaw <= 1
-        ? Math.round(progressRaw * 100)
-        : Math.round(progressRaw);
-    } else if (typeof progressRaw === "string") {
-      progress = Math.round(parseFloat(progressRaw.replace("%", "")) || 0);
+// ============================================================
+// SELF MODE
+// ============================================================
+function onNikSelf() {
+  clearTimeout(selfTimer);
+  selfTimer = setTimeout(function() {
+    var nik  = document.getElementById('nikSelf').value.trim();
+    var card = document.getElementById('selfCard');
+    if (nik.length < 3) { card.style.display = 'none'; return; }
+    var person = allData.find(function(d) { return d.nik === nik; });
+    card.style.display = 'block';
+    if (!person) {
+      document.getElementById('selfContent').innerHTML =
+        '<div class="empty-state">Employee ID not found. Please check your NIK.</div>';
+      return;
     }
-    progress = Math.max(0, Math.min(100, progress));
+    renderSelfView(person);
+  }, 300);
+}
 
-    employees.push({
-      nik: nik,
-      name: name,
-      dept: dept,
-      spv: spv,
-      notCompleted: notCompleted,
-      status: status,
-      progress: progress
+function renderSelfView(p) {
+  var color  = pColor(p.progress);
+  var tags   = parseTags(p.notCompleted);
+
+  var trainingHtml = '';
+  if (p.progress >= 100) {
+    trainingHtml = '<p style="font-size:13px;color:var(--green-fg);font-weight:500">All mandatory training has been completed.</p>';
+  } else if (tags.length === 0) {
+    trainingHtml = '<p style="font-size:13px;color:var(--text-2)">No incomplete training data available.</p>';
+  } else {
+    trainingHtml =
+      '<div class="tag-list" style="margin-bottom:1.25rem">' +
+        tags.map(function(t) { return '<span class="tag-item">' + esc(t) + '</span>'; }).join('') +
+      '</div>' +
+      '<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="lms-btn">' +
+        '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 0 12 0A6 6 0 0 0 2 8z"/><path d="M8 5v3l2 1"/></svg>' +
+        'Go to Otsuka ILMU' +
+      '</a>';
+  }
+
+  document.getElementById('selfContent').innerHTML =
+    '<div class="profile-header">' +
+      '<div class="avatar avatar-blue">' + esc(initials(p.name)) + '</div>' +
+      '<div>' +
+        '<div class="profile-name">' + esc(p.name) + '</div>' +
+        '<div class="profile-meta">NIK ' + esc(p.nik) + ' &nbsp;·&nbsp; ' + esc(p.dept) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="prog-big-wrap" style="margin-bottom:1.25rem">' +
+      '<div class="prog-big-label">Mandatory Training Progress</div>' +
+      '<div class="prog-big-pct" style="color:' + color + '">' + p.progress + '%</div>' +
+      '<div class="prog-big-bar-wrap">' +
+        '<div class="prog-big-bar-fill" style="width:' + p.progress + '%;background:' + color + '"></div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-top:10px">' +
+        statusBadge(p.progress) +
+        '<span style="font-size:12px;color:var(--text-2)">' +
+          (p.progress >= 100
+            ? 'All mandatory training completed.'
+            : 'Complete the remaining training to reach 100%.') +
+        '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="section-label">Incomplete Training</div>' +
+    trainingHtml;
+}
+
+// ============================================================
+// TEAM MODE — hierarchical traversal
+// ============================================================
+function onNikTeam() {
+  clearTimeout(teamTimer);
+  teamTimer = setTimeout(function() {
+    var nik  = document.getElementById('nikTeam').value.trim();
+    var card = document.getElementById('teamCard');
+    if (nik.length < 3) { card.style.display = 'none'; return; }
+
+    var manager = allData.find(function(d) { return d.nik === nik; });
+    if (!manager) {
+      card.style.display = 'block';
+      document.getElementById('teamHeader').innerHTML =
+        '<div class="empty-state">Employee ID not found. Please check your NIK.</div>';
+      document.getElementById('teamBody').innerHTML = '';
+      document.getElementById('emptyTeam').style.display = 'none';
+      document.getElementById('teamPg').style.display    = 'none';
+      return;
+    }
+
+    // Build name→employee map for fast lookup
+    var nameMap = {};
+    allData.forEach(function(d) {
+      if (d.name) nameMap[d.name.toLowerCase()] = d;
     });
 
-    if (dept) deptSet[dept] = true;
-  }
+    // Recursive traversal — collect all reports under manager
+    // Each entry gets a `level` and `reportsTo` (direct supervisor name)
+    teamFiltered = [];
+    collectReports(manager.name, nameMap, 1, manager.name);
+    teamFiltered.sort(function(a, b) {
+      if (a.level !== b.level) return a.level - b.level;
+      return a.name.localeCompare(b.name, 'id');
+    });
 
-  // Sort nama abjad
-  employees.sort(function(a, b) {
-    return a.name.localeCompare(b.name, "id");
-  });
+    teamPage = 1;
 
-  var departments = Object.keys(deptSet).sort(function(a, b) {
-    return a.localeCompare(b, "id");
-  });
+    // Summary
+    var total    = teamFiltered.length;
+    var complete = teamFiltered.filter(function(d) { return d.progress >= 100; }).length;
+    var prog     = teamFiltered.filter(function(d) { return d.progress > 0 && d.progress < 100; }).length;
+    var none     = teamFiltered.filter(function(d) { return d.progress === 0; }).length;
+    var avg      = total ? Math.round(teamFiltered.reduce(function(s,d) { return s + d.progress; }, 0) / total) : 0;
 
-  return {
-    employees: employees,
-    departments: departments,
-    fetchedAt: new Date().toISOString()
-  };
+    document.getElementById('teamHeader').innerHTML =
+      '<div class="profile-header">' +
+        '<div class="avatar avatar-teal">' + esc(initials(manager.name)) + '</div>' +
+        '<div>' +
+          '<div class="profile-name">' + esc(manager.name) + '</div>' +
+          '<div class="profile-meta">NIK ' + esc(manager.nik) + ' &nbsp;·&nbsp; ' + esc(manager.dept) +
+            ' &nbsp;·&nbsp; ' + total + ' team member' + (total !== 1 ? 's' : '') + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="stats-row">' +
+        '<div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">' + total + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value" style="color:var(--green-fg)">' + complete + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">On Progress</div><div class="stat-value" style="color:var(--blue-fg)">' + prog + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">Not Started</div><div class="stat-value" style="color:var(--gray-fg)">' + none + '</div></div>' +
+        '<div class="stat-card"><div class="stat-label">Avg. Progress</div><div class="stat-value">' + avg + '%</div></div>' +
+      '</div>';
+
+    renderTeamTable();
+    card.style.display = 'block';
+  }, 300);
 }
+
+// Recursive: find all employees whose SPV = managerName, then recurse into each
+function collectReports(managerName, nameMap, level, directSpvName) {
+  var reports = allData.filter(function(d) {
+    return d.spv && d.spv.toLowerCase() === managerName.toLowerCase();
+  });
+  reports.forEach(function(emp) {
+    // Avoid infinite loops (self-referencing SPV)
+    var alreadyAdded = teamFiltered.find(function(x) { return x.nik === emp.nik; });
+    if (alreadyAdded) return;
+    teamFiltered.push({
+      nik: emp.nik,
+      name: emp.name,
+      dept: emp.dept,
+      spv: emp.spv,
+      notCompleted: emp.notCompleted,
+      status: emp.status,
+      progress: emp.progress,
+      level: level,
+      reportsTo: emp.spv
+    });
+    collectReports(emp.name, nameMap, level + 1, emp.name);
+  });
+}
+
+function renderTeamTable() {
+  renderTable(teamFiltered, teamPage, 'team', true);
+}
+
+// ============================================================
+// SHARED TABLE RENDERER
+// ============================================================
+function renderTable(data, page, prefix, showTeamCols) {
+  var body    = document.getElementById(prefix + 'Body');
+  var emptyEl = document.getElementById('empty' + prefix.charAt(0).toUpperCase() + prefix.slice(1));
+  var pgBar   = document.getElementById(prefix + 'Pg');
+  var pgInfo  = document.getElementById(prefix + 'PgInfo');
+  var pgPrev  = document.getElementById(prefix + 'PgPrev');
+  var pgNext  = document.getElementById(prefix + 'PgNext');
+  var total   = data.length;
+
+  if (total === 0) {
+    body.innerHTML = '';
+    emptyEl.style.display = 'block';
+    pgBar.style.display   = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  var start = (page - 1) * PAGE_SIZE;
+  var end   = Math.min(start + PAGE_SIZE, total);
+  var rows  = data.slice(start, end);
+
+  body.innerHTML = rows.map(function(d, i) {
+    var color    = pColor(d.progress);
+    var tags     = parseTags(d.notCompleted);
+    var tagsHtml = tags.length
+      ? tags.map(function(t) { return tagHtml(t); }).join('')
+      : '<span style="font-size:12px;color:var(--text-3)">—</span>';
+
+    var teamCols = showTeamCols
+      ? '<td class="col-dept" style="font-size:12px;color:var(--text-2)">' + esc(d.dept) + '</td>' +
+        '<td class="col-lvl">' + levelBadge(d.level, d.reportsTo) + '</td>'
+      : '';
+
+    return '<tr>' +
+      '<td class="col-no" style="font-size:12px;color:var(--text-3)">' + (start + i + 1) + '</td>' +
+      '<td class="col-nik" style="font-size:12px;color:var(--text-2)">' + esc(d.nik) + '</td>' +
+      '<td class="col-name"><div class="emp-name">' + esc(d.name) + '</div></td>' +
+      teamCols +
+      '<td class="col-prog">' +
+        '<div class="pbar-wrap"><div class="pbar-fill" style="width:' + d.progress + '%;background:' + color + '"></div></div>' +
+        '<div class="pbar-pct">' + d.progress + '%</div>' +
+      '</td>' +
+      '<td class="col-stat">' + statusBadge(d.progress) + '</td>' +
+      '<td class="col-rem"><div class="tag-list">' + tagsHtml + '</div></td>' +
+    '</tr>';
+  }).join('');
+
+  var totalPages = Math.ceil(total / PAGE_SIZE);
+  pgInfo.textContent = 'Showing ' + (start + 1) + '–' + end + ' of ' + total + ' employees';
+  pgPrev.disabled    = page <= 1;
+  pgNext.disabled    = page >= totalPages;
+  pgBar.style.display = total > PAGE_SIZE ? 'flex' : 'none';
+}
+
+function changePage(prefix, dir) {
+  if (prefix === 'dept') {
+    deptPage = Math.max(1, Math.min(Math.ceil(deptFiltered.length / PAGE_SIZE), deptPage + dir));
+    renderDeptTable();
+  } else {
+    teamPage = Math.max(1, Math.min(Math.ceil(teamFiltered.length / PAGE_SIZE), teamPage + dir));
+    renderTeamTable();
+  }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function pColor(pct) {
+  if (pct >= 100) return '#3B6D11';
+  if (pct >= 70)  return '#185FA5';
+  if (pct >= 40)  return '#BA7517';
+  return '#A32D2D';
+}
+
+function statusBadge(pct) {
+  if (pct >= 100) return '<span class="badge b-complete">Complete</span>';
+  if (pct > 0)    return '<span class="badge b-progress">On Progress</span>';
+  return '<span class="badge b-none">Not Started</span>';
+}
+
+function levelBadge(level, reportsTo) {
+  var cls = level === 1 ? 'lvl-1' : level === 2 ? 'lvl-2' : level === 3 ? 'lvl-3' : 'lvl-n';
+  var label = level === 1 ? 'Direct Report' : 'L' + level + ' — ' + esc(reportsTo || '');
+  return '<span class="lvl-badge ' + cls + '">' + label + '</span>';
+}
+
+function parseTags(str) {
+  if (!str || str.trim() === '') return [];
+  return str.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+}
+
+function tagHtml(label) {
+  return '<span class="tag-item">' + esc(label) +
+    '&nbsp;<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="tag-link">' +
+      '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h8M6 2l4 4-4 4"/></svg>Open' +
+    '</a></span>';
+}
+
+function initials(name) {
+  var parts = name.trim().split(' ').filter(Boolean);
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
