@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDP Completion Tracker — PT. Amerta Indah Otsuka</title>
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.app-header {
+  background: #003366;
+  color: #fff;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+.app-header h1 { font-size: 1rem; font-weight: 700; }
+.app-header span { font-size: .75rem; opacity: .65; display: block; margin-top: 2px; }
+
+/* ── Layout ── */
+.main { max-width: 960px; margin: 0 auto; padding: 24px 16px 90px; }
+
+/* ── Cards ── */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  margin-bottom: 18px;
+}
+.card-title {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: #003366;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8edf2;
+}
+
+/* ── Form ── */
+label { display: block; font-size: .81rem; font-weight: 600; color: #444; margin-bottom: 5px; }
+select, input[type=text], input[type=password] {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid #d0d7e2;
+  border-radius: 8px;
+  font-size: .91rem;
+  color: #1a1a2e;
+  background: #fff;
+  transition: border-color .2s;
+}
+select:focus, input:focus {
+  outline: none;
+  border-color: #003366;
+  box-shadow: 0 0 0 3px rgba(0,51,102,.1);
+}
+.form-row { margin-bottom: 14px; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: .87rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+}
+.btn:active { transform: scale(.98); }
+.btn-primary   { background: #003366; color: #fff; }
+.btn-primary:hover { background: #004080; }
+.btn-secondary { background: #e8edf2; color: #003366; }
+.btn-secondary:hover { background: #d5dce8; }
+.btn-outline   { background: transparent; border: 1.5px solid #003366; color: #003366; }
+.btn-outline:hover { background: #f0f4f8; }
+.btn-sm { padding: 6px 13px; font-size: .78rem; }
+.btn-full { width: 100%; }
+
+/* ── Tab Nav ── */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  background: #e8edf2;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 22px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-size: .81rem;
+  font-weight: 600;
+  color: #667;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+  white-space: nowrap;
+}
+.tab-btn.active { background: #fff; color: #003366; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+/* ── Progress Bar ── */
+.progress-wrap { margin: 12px 0; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: .79rem;
+  color: #667;
+  margin-bottom: 5px;
+}
+.progress-bar-bg {
+  height: 9px;
+  background: #e8edf2;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .6s ease;
+}
+.fill-complete { background: #2e7d32; }
+.fill-high     { background: #1565c0; }
+.fill-mid      { background: #e65100; }
+.fill-low      { background: #b71c1c; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.b-complete { background: #e8f5e9; color: #2e7d32; }
+.b-progress { background: #e3f2fd; color: #1565c0; }
+.b-none     { background: #f0f0f0; color: #888; }
+.b-online   { background: #e3f2fd; color: #1565c0; }
+.b-offline  { background: #fff3e0; color: #e65100; }
+.b-selflearn{ background: #ede7f6; color: #4527a0; }
+.b-target   { background: #e8f5e9; color: #2e7d32; font-size: .67rem; }
+
+/* ── Training Row (poin 4: per-baris training) ── */
+.training-section { margin-top: 18px; }
+.training-section-title {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #555;
+  margin-bottom: 10px;
+}
+.training-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 11px 14px;
+  border: 1px solid #e8edf2;
+  border-radius: 9px;
+  margin-bottom: 7px;
+  background: #fafcff;
+  transition: border-color .15s;
+}
+.training-row:hover { border-color: #b0c4de; }
+.training-row-name {
+  font-size: .86rem;
+  font-weight: 700;
+  color: #003366;
+}
+.training-row-sub {
+  font-size: .74rem;
+  color: #888;
+  margin-top: 2px;
+}
+.training-row-date {
+  font-size: .78rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.training-row-date svg { width: 12px; height: 12px; opacity: .5; flex-shrink: 0; }
+.training-row-method { }
+.training-row-lms {
+  display: flex;
+  justify-content: flex-end;
+}
+.lms-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: #003366;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: .74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.lms-btn:hover { background: #004080; }
+.lms-btn svg { width: 11px; height: 11px; }
+
+/* No schedule state */
+.no-schedule {
+  font-size: .82rem;
+  color: #888;
+  padding: 10px 0;
+  font-style: italic;
+}
+
+/* ── Team Table ── */
+.team-table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  padding: 10px 12px;
+  background: #f4f7fb;
+  font-size: .74rem;
+  font-weight: 700;
+  color: #445;
+  text-align: left;
+  border-bottom: 2px solid #dde4ee;
+  white-space: nowrap;
+}
+td {
+  padding: 10px 12px;
+  font-size: .82rem;
+  border-bottom: 1px solid #eef1f6;
+  vertical-align: middle;
+}
+tr.clickable:hover td { background: #f5f8ff; cursor: pointer; }
+
+/* Level hierarchy badge */
+.lvl-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+.lvl-direct { background: #e3f2fd; color: #1565c0; }
+.lvl-2      { background: #e8f5e9; color: #2e7d32; }
+.lvl-3      { background: #fff3e0; color: #e65100; }
+.lvl-4      { background: #fce4ec; color: #880e4f; }
+
+/* ── Member Detail ── */
+.member-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.member-avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: #003366;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.member-info-name { font-size: 1rem; font-weight: 700; }
+.member-info-sub  { font-size: .78rem; color: #667; margin-top: 2px; }
+
+/* ── All Schedule Tab ── */
+.schedule-filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.schedule-filter-bar input,
+.schedule-filter-bar select {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  font-size: .82rem;
+}
+.schedule-card {
+  border: 1.5px solid #e0e7ef;
+  border-radius: 10px;
+  padding: 13px 16px;
+  background: #fafcff;
+  margin-bottom: 8px;
+}
+.schedule-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+.schedule-comp-name {
+  font-size: .87rem;
+  font-weight: 700;
+  color: #003366;
+  flex: 1;
+}
+.schedule-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+  margin-top: 4px;
+}
+.schedule-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .75rem;
+  color: #555;
+}
+.schedule-meta-item svg { width: 12px; height: 12px; opacity: .55; flex-shrink: 0; }
+.matched-comp { color: #003366; }
+.other-comp   { color: #bbb; }
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: .81rem;
+  color: #667;
+}
+
+/* ── Utility ── */
+.hidden { display: none !important; }
+.mt-8   { margin-top: 8px; }
+.mt-16  { margin-top: 16px; }
+.divider { border: none; border-top: 1px solid #eef1f6; margin: 14px 0; }
+.lms-link-wrap { margin-top: 18px; text-align: center; }
+.error-box {
+  background: #fff0f0;
+  border: 1.5px solid #f5a0a0;
+  border-radius: 9px;
+  padding: 13px 16px;
+  color: #b71c1c;
+  font-size: .84rem;
+  margin-top: 10px;
+}
+
+/* ── Loading ── */
+#loadingScreen {
+  position: fixed; inset: 0;
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 14px;
+}
+.spinner {
+  width: 38px; height: 38px;
+  border: 4px solid #d0d7e2;
+  border-top-color: #003366;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#loadingScreen p { color: #667; font-size: .88rem; }
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-top: 1px solid #e0e7ef;
+  display: flex;
+  z-index: 200;
+  box-shadow: 0 -2px 10px rgba(0,0,0,.07);
+}
+.bottom-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 9px 4px;
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: .63rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color .2s;
+  border-top: 2px solid transparent;
+}
+.bottom-nav-btn.active { color: #003366; border-top-color: #003366; }
+.bottom-nav-btn svg { width: 20px; height: 20px; }
+
+@media (max-width: 600px) {
+  .main { padding: 16px 12px 88px; }
+  .card { padding: 16px 13px; }
+  .training-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  .training-row-name { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Loading IDP data...</p>
+</div>
+
+<!-- Header -->
+<header class="app-header">
+  <div>
+    <h1>IDP Completion Tracker</h1>
+    <span>PT. Amerta Indah Otsuka</span>
+  </div>
+</header>
+
+<!-- App (hidden until loaded) -->
+<div class="main hidden" id="appContent">
+
+  <!-- SCREEN: Gate -->
+  <div id="screenGate">
+    <div class="card">
+      <div class="card-title">Access Tracker</div>
+      <div class="form-row">
+        <label for="gateDept">Department</label>
+        <select id="gateDept"><option value="">— Select department —</option></select>
+      </div>
+      <div class="form-row">
+        <label for="gatePass">Password</label>
+        <input type="password" id="gatePass" placeholder="Enter department password"
+               onkeydown="if(event.key==='Enter') submitGate()">
+      </div>
+      <div id="gateError" class="error-box hidden"></div>
+      <div class="mt-8">
+        <button class="btn btn-primary btn-full" onclick="submitGate()">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN: Main -->
+  <div id="screenMain" class="hidden">
+
+    <!-- Single tab nav — no duplication with bottom nav -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('progress')" id="tabBtnProgress">Track My Progress</button>
+      <button class="tab-btn" onclick="switchTab('team')"     id="tabBtnTeam">Track My Team</button>
+      <button class="tab-btn" onclick="switchTab('schedule')" id="tabBtnSchedule">All Schedules</button>
+    </div>
+
+    <!-- TAB: Track My Progress -->
+    <div id="tabProgress">
+      <div class="card">
+        <div class="card-title">My IDP Progress</div>
+        <div class="form-row">
+          <label for="nikInput">Employee ID (NIK)</label>
+          <input type="text" id="nikInput" placeholder="Enter your NIK"
+                 onkeydown="if(event.key==='Enter') lookupEmployee()"
+                 oninput="clearProgressResult()">
+        </div>
+        <button class="btn btn-primary" onclick="lookupEmployee()">Check Progress</button>
+        <div id="progressResult" class="mt-16 hidden"></div>
+      </div>
+    </div>
+
+    <!-- TAB: Track My Team -->
+    <div id="tabTeam" class="hidden">
+      <div class="card" id="teamCard">
+        <div class="card-title" id="teamCardTitle">My Team Progress</div>
+        <div id="teamInputSection" class="form-row">
+          <label for="teamNikInput">Supervisor NIK</label>
+          <input type="text" id="teamNikInput" placeholder="Enter supervisor NIK"
+                 onkeydown="if(event.key==='Enter') loadTeamHierarchy()">
+          <div style="margin-top:8px">
+            <button class="btn btn-primary" onclick="loadTeamHierarchy()">View Team</button>
+          </div>
+        </div>
+        <div id="teamError" class="error-box hidden"></div>
+        <!-- Team table (shown after NIK lookup) -->
+        <div id="teamTableSection" class="hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <span id="teamSupervisorLabel" style="font-size:.85rem;font-weight:700;color:#003366;"></span>
+            <button class="btn btn-secondary btn-sm" onclick="resetTeamView()">Change Supervisor</button>
+          </div>
+          <div class="team-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>NIK</th>
+                  <th>Grade</th>
+                  <th>Level</th>
+                  <th>Progress</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="teamTableBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="teamPagination"></div>
+        </div>
+        <!-- Member detail (shown on row click) -->
+        <div id="memberDetailSection" class="hidden">
+          <button class="btn btn-secondary btn-sm" onclick="backToTeamTable()" style="margin-bottom:16px">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M10 12L6 8l4-4"/></svg>
+            Back to Team
+          </button>
+          <div id="memberDetailContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: All Schedules -->
+    <div id="tabSchedule" class="hidden">
+      <div class="card">
+        <div class="card-title">All Upcoming Schedules</div>
+        <div class="schedule-filter-bar">
+          <input type="text" id="schedSearch" placeholder="Search competency / trainer..."
+                 oninput="renderAllSchedules()">
+          <select id="schedTypeFilter" onchange="renderAllSchedules()">
+            <option value="">All Types</option>
+            <option value="Online">Online</option>
+            <option value="Offline">Offline</option>
+            <option value="Self Learning">Self Learning</option>
+          </select>
+        </div>
+        <div id="allScheduleList"></div>
+      </div>
+    </div>
+
+  </div><!-- /screenMain -->
+</div><!-- /appContent -->
+
+<!-- Bottom Nav (no labels — icons only to avoid duplication with tab nav) -->
+<nav class="bottom-nav hidden" id="bottomNav">
+  <button class="bottom-nav-btn active" id="navBtnProgress" onclick="switchTab('progress')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    Track My Progress
+  </button>
+  <button class="bottom-nav-btn" id="navBtnTeam" onclick="switchTab('team')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Track My Team
+  </button>
+  <button class="bottom-nav-btn" id="navBtnSchedule" onclick="switchTab('schedule')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    All Schedules
+  </button>
+</nav>
+
+<script>
+// ─── Config ──────────────────────────────────────────────────────────────────
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCV7j4CHY7ljwsZxBQ1g_qdLkmhTkIwob7f78kKPEs8eyxT0Un2b7Gv_JosbSrWtpqvw/exec";
+var LMS_URL = "https://myapps.aio.co.id/otsukago-mobile";
+
+// Grade hierarchy for range parsing
+var GRADE_ORDER = ["S0","S1","S2","S3","M1","M2","M3","G1","D1","D2","D3"];
+
+// ─── State ───────────────────────────────────────────────────────────────────
+var appData        = null;
+var currentDept    = "";
+var currentTab     = "progress";
+var teamHierarchy  = [];   // flat list with .level property
+var teamPage       = 1;
+var PAGE_SIZE      = 20;
+
+// ─── Boot ────────────────────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", function() {
+  fetch(APPS_SCRIPT_URL + "?action=getData")
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+      appData = data;
+      populateDeptDropdown();
+      document.getElementById("loadingScreen").classList.add("hidden");
+      document.getElementById("appContent").classList.remove("hidden");
+    })
+    .catch(function(err) {
+      document.getElementById("loadingScreen").innerHTML =
+        '<div style="text-align:center;padding:40px 20px">' +
+        '<p style="color:#b71c1c;font-weight:700;font-size:1rem">Failed to load data</p>' +
+        '<p style="color:#888;font-size:.84rem;margin-top:8px">' + String(err.message) + '</p>' +
+        '</div>';
+    });
+});
+
+function populateDeptDropdown() {
+  var el = document.getElementById("gateDept");
+  if (!el || !appData) return;
+  el.innerHTML = '<option value="">— Select department —</option>';
+  (appData.departments || []).forEach(function(d) {
+    var opt = document.createElement("option");
+    opt.value = d; opt.textContent = d;
+    el.appendChild(opt);
+  });
+}
+
+// ─── Gate ────────────────────────────────────────────────────────────────────
+function submitGate() {
+  var dept = document.getElementById("gateDept").value;
+  var pass = document.getElementById("gatePass").value;
+  var errEl = document.getElementById("gateError");
+  errEl.classList.add("hidden");
+
+  if (!dept || !pass) {
+    errEl.textContent = "Please select a department and enter the password.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  fetch(APPS_SCRIPT_URL + "?action=verifyPassword&dept=" +
+        encodeURIComponent(dept) + "&password=" + encodeURIComponent(pass))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.valid) {
+        currentDept = dept;
+        document.getElementById("screenGate").classList.add("hidden");
+        document.getElementById("screenMain").classList.remove("hidden");
+        document.getElementById("bottomNav").classList.remove("hidden");
+        renderAllSchedules();
+      } else {
+        errEl.textContent = "Incorrect password or department not registered.";
+        errEl.classList.remove("hidden");
+      }
+    })
+    .catch(function() {
+      errEl.textContent = "Network error. Please try again.";
+      errEl.classList.remove("hidden");
+    });
+}
+
+// ─── Tab Switching ────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  ["progress","team","schedule"].forEach(function(t) {
+    document.getElementById("tab" + capitalize(t)).classList.toggle("hidden", t !== tab);
+    document.getElementById("tabBtn" + capitalize(t)).classList.toggle("active", t === tab);
+    document.getElementById("navBtn" + capitalize(t)).classList.toggle("active", t === tab);
+  });
+}
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ─── Track My Progress ───────────────────────────────────────────────────────
+function clearProgressResult() {
+  document.getElementById("progressResult").classList.add("hidden");
+}
+
+function lookupEmployee() {
+  var nik = document.getElementById("nikInput").value.trim();
+  if (!nik) return;
+  var emp = findEmployeeByNik(nik);
+  var resultEl = document.getElementById("progressResult");
+  if (!emp) {
+    resultEl.innerHTML = '<div class="error-box">NIK not found. Please verify your employee ID.</div>';
+  } else {
+    resultEl.innerHTML = buildEmployeeDetailHTML(emp);
+  }
+  resultEl.classList.remove("hidden");
+}
+
+function findEmployeeByNik(nik) {
+  if (!appData) return null;
+  return appData.employees.find(function(e) { return e.nik === nik; }) || null;
+}
+
+// ─── Employee Detail HTML (shared by Track My Progress & team member click) ──
+function buildEmployeeDetailHTML(emp) {
+  var pct   = emp.progress;
+  var pFill = pct >= 100 ? "fill-complete" : pct >= 70 ? "fill-high" : pct >= 40 ? "fill-mid" : "fill-low";
+
+  var html = '<div class="member-detail-header">' +
+    '<div class="member-avatar">' + initials(emp.name) + '</div>' +
+    '<div>' +
+      '<div class="member-info-name">' + esc(emp.name) + '</div>' +
+      '<div class="member-info-sub">' + esc(emp.grade) + ' &bull; ' + esc(emp.department) + '</div>' +
+    '</div>' +
+  '</div>';
+
+  // Progress bar
+  html += '<div class="progress-wrap">' +
+    '<div class="progress-label"><span>IDP Progress</span><span>' + pct + '%</span></div>' +
+    '<div class="progress-bar-bg">' +
+      '<div class="progress-bar-fill ' + pFill + '" style="width:' + pct + '%"></div>' +
+    '</div>' +
+  '</div>';
+
+  // Training rows — incomplete trainings with schedule info
+  var assignments = (appData.assignmentIndex && appData.assignmentIndex[emp.nik]) || [];
+  var notDone     = parseTags(emp.notCompleted);
+
+  html += buildTrainingRows(emp, notDone, assignments);
+
+  // LMS button
+  html += '<div class="lms-link-wrap">' +
+    '<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="btn btn-outline">' +
+      iconExternal() + 'Open Otsuka ILMU' +
+    '</a>' +
+  '</div>';
+
+  return html;
+}
+
+/**
+ * For each incomplete training, find its next schedule and display as a row.
+ * If no schedule found, still show the row with "Schedule TBD".
+ * Logic: match via assignmentIndex (competency + targetLevel), then find
+ * earliest matching schedule in appData.schedules.
+ */
+function buildTrainingRows(emp, notDone, assignments) {
+  if (notDone.length === 0) {
+    return '<div class="training-section">' +
+      '<div class="training-section-title">Incomplete Training</div>' +
+      '<div class="no-schedule">All training completed.</div>' +
+    '</div>';
+  }
+
+  var html = '<div class="training-section">' +
+    '<div class="training-section-title">Incomplete Training — ' + notDone.length + ' remaining</div>';
+
+  notDone.forEach(function(trainingName) {
+    // Find assignment for this training name
+    var assignment = assignments.find(function(a) {
+      return a.competency.toLowerCase().indexOf(trainingName.toLowerCase()) !== -1 ||
+             trainingName.toLowerCase().indexOf(a.competency.toLowerCase()) !== -1;
+    });
+    var targetLevel = assignment ? assignment.targetLevel : null;
+
+    // Find best (earliest) matching schedule
+    var matchedSched = findBestSchedule(emp.grade, trainingName, targetLevel);
+
+    // Row
+    html += '<div class="training-row">';
+
+    // Col 1: training name + target level
+    html += '<div>' +
+      '<div class="training-row-name">' + esc(trainingName) + '</div>';
+    if (targetLevel !== null) {
+      html += '<div class="training-row-sub">Target: Level ' + targetLevel + '</div>';
+    }
+    html += '</div>';
+
+    // Col 2: date
+    if (matchedSched) {
+      var dateStr = matchedSched.isSelfLearning
+        ? (matchedSched.dateEnd ? 'Until ' + matchedSched.dateEnd : 'Self Learning')
+        : (matchedSched.date + (matchedSched.time ? ' | ' + matchedSched.time : ''));
+      html += '<div class="training-row-date">' + iconCalendar() + '<span>' + esc(dateStr) + '</span></div>';
+    } else {
+      html += '<div class="training-row-date" style="color:#bbb">' + iconCalendar() + '<span>Schedule TBD</span></div>';
+    }
+
+    // Col 3: method badge
+    if (matchedSched) {
+      var badgeCls = matchedSched.isSelfLearning ? 'b-selflearn'
+        : matchedSched.trainingType.toLowerCase() === 'offline' ? 'b-offline' : 'b-online';
+      html += '<div><span class="badge ' + badgeCls + '">' + esc(matchedSched.trainingType) + '</span></div>';
+    } else {
+      html += '<div><span class="badge b-none">—</span></div>';
+    }
+
+    // Col 4: LMS link
+    html += '<div class="training-row-lms">' +
+      '<a href="' + LMS_URL + '" target="_blank" rel="noopener noreferrer" class="lms-btn">' +
+        iconExternal() + 'Open' +
+      '</a>' +
+    '</div>';
+
+    html += '</div>'; // /training-row
+  });
+
+  html += '</div>'; // /training-section
+  return html;
+}
+
+/**
+ * Find the earliest upcoming schedule for a given training name + target level + grade.
+ * Returns the schedule object or null.
+ */
+function findBestSchedule(empGrade, trainingName, targetLevel) {
+  if (!appData || !appData.schedules) return null;
+  var candidates = [];
+
+  appData.schedules.forEach(function(sched) {
+    // Grade filter
+    if (sched.participantGrades.length > 0 &&
+        sched.participantGrades.indexOf(empGrade) === -1) return;
+
+    // Level filter (only if targetLevel known)
+    if (targetLevel !== null && sched.levelRange.length > 0 &&
+        sched.levelRange.indexOf(targetLevel) === -1) return;
+
+    // Competency name match
+    var compMatch = sched.competencyList.some(function(c) {
+      return c.toLowerCase().indexOf(trainingName.toLowerCase()) !== -1 ||
+             trainingName.toLowerCase().indexOf(c.toLowerCase()) !== -1;
+    });
+    if (!compMatch) return;
+
+    candidates.push(sched);
+  });
+
+  if (candidates.length === 0) return null;
+
+  // Sort: non-self-learning first (date ascending), self-learning after
+  candidates.sort(function(a, b) {
+    if (a.isSelfLearning !== b.isSelfLearning) return a.isSelfLearning ? 1 : -1;
+    return a.dateRaw - b.dateRaw;
+  });
+
+  return candidates[0];
+}
+
+// ─── Track My Team — Hierarchy ────────────────────────────────────────────────
+function loadTeamHierarchy() {
+  var nik   = document.getElementById("teamNikInput").value.trim();
+  var errEl = document.getElementById("teamError");
+  errEl.classList.add("hidden");
+
+  if (!nik) {
+    errEl.textContent = "Please enter a supervisor NIK.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  var supervisor = findEmployeeByNik(nik);
+  if (!supervisor) {
+    errEl.textContent = "NIK not found in the system.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  // Build hierarchy by recursive traversal using supervisor name
+  teamHierarchy = [];
+  traverseHierarchy(supervisor.name, 1);
+
+  if (teamHierarchy.length === 0) {
+    errEl.textContent = "No direct reports found under this supervisor.";
+    errEl.classList.remove("hidden");
+    return;
+  }
+
+  document.getElementById("teamSupervisorLabel").textContent =
+    "Team under: " + supervisor.name + " (" + supervisor.grade + ")";
+  document.getElementById("teamInputSection").classList.add("hidden");
+  document.getElementById("teamTableSection").classList.remove("hidden");
+  teamPage = 1;
+  renderTeamTable();
+}
+
+/**
+ * Recursive downward traversal.
+ * Finds all employees whose supervisor === supervisorName, adds them with .level,
+ * then recurses on each found employee.
+ * Guard: maxDepth 6 to prevent infinite loops on circular data.
+ */
+function traverseHierarchy(supervisorName, level, _depth) {
+  _depth = _depth || 0;
+  if (_depth > 6) return;
+
+  var directReports = appData.employees.filter(function(e) {
+    return (e.supervisor || "").trim() === supervisorName.trim();
+  });
+
+  directReports.forEach(function(emp) {
+    // Avoid duplicates (in case of data issues)
+    var alreadyAdded = teamHierarchy.some(function(x) { return x.nik === emp.nik; });
+    if (alreadyAdded) return;
+
+    teamHierarchy.push({ emp: emp, level: level });
+    traverseHierarchy(emp.name, level + 1, _depth + 1);
+  });
+}
+
+function renderTeamTable() {
+  var tbody = document.getElementById("teamTableBody");
+  var start = (teamPage - 1) * PAGE_SIZE;
+  var page  = teamHierarchy.slice(start, start + PAGE_SIZE);
+
+  if (page.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;padding:22px">No data found.</td></tr>';
+    document.getElementById("teamPagination").innerHTML = "";
+    return;
+  }
+
+  tbody.innerHTML = page.map(function(item) {
+    var emp = item.emp;
+    var pct = emp.progress;
+    var pFill = pct >= 100 ? "fill-complete" : pct >= 70 ? "fill-high" : pct >= 40 ? "fill-mid" : "fill-low";
+    var statusBadge = pct >= 100
+      ? '<span class="badge b-complete">Complete</span>'
+      : pct > 0
+        ? '<span class="badge b-progress">On Progress</span>'
+        : '<span class="badge b-none">Not Started</span>';
+
+    // Level badge
+    var lvlLabel = item.level === 1 ? "Direct Report" : "Level " + item.level;
+    var lvlCls   = item.level === 1 ? "lvl-direct" : item.level === 2 ? "lvl-2" : item.level === 3 ? "lvl-3" : "lvl-4";
+    var lvlBadge = '<span class="lvl-badge ' + lvlCls + '">' + lvlLabel + '</span>';
+
+    return '<tr class="clickable" onclick="openMemberDetail(\'' + esc(emp.nik) + '\')">' +
+      '<td>' + esc(emp.name) + '</td>' +
+      '<td>' + esc(emp.nik) + '</td>' +
+      '<td>' + esc(emp.grade) + '</td>' +
+      '<td>' + lvlBadge + '</td>' +
+      '<td>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<div class="progress-bar-bg" style="width:70px;flex-shrink:0">' +
+            '<div class="progress-bar-fill ' + pFill + '" style="width:' + pct + '%"></div>' +
+          '</div>' +
+          '<span style="font-size:.77rem;color:#667">' + pct + '%</span>' +
+        '</div>' +
+      '</td>' +
+      '<td>' + statusBadge + '</td>' +
+    '</tr>';
+  }).join("");
+
+  // Pagination
+  var totalPages = Math.ceil(teamHierarchy.length / PAGE_SIZE);
+  var pag = document.getElementById("teamPagination");
+  if (totalPages <= 1) {
+    pag.innerHTML = '<span>' + teamHierarchy.length + ' team members</span>';
+  } else {
+    pag.innerHTML =
+      '<button class="btn btn-secondary btn-sm" onclick="changePage(-1)"' +
+        (teamPage === 1 ? " disabled" : "") + '>&#8592;</button>' +
+      '<span>' + teamPage + ' / ' + totalPages + ' (' + teamHierarchy.length + ' members)</span>' +
+      '<button class="btn btn-secondary btn-sm" onclick="changePage(1)"' +
+        (teamPage === totalPages ? " disabled" : "") + '>&#8594;</button>';
+  }
+}
+
+function changePage(dir) {
+  var totalPages = Math.ceil(teamHierarchy.length / PAGE_SIZE);
+  teamPage = Math.max(1, Math.min(totalPages, teamPage + dir));
+  renderTeamTable();
+}
+
+function resetTeamView() {
+  teamHierarchy = [];
+  teamPage = 1;
+  document.getElementById("teamNikInput").value = "";
+  document.getElementById("teamError").classList.add("hidden");
+  document.getElementById("teamTableSection").classList.add("hidden");
+  document.getElementById("memberDetailSection").classList.add("hidden");
+  document.getElementById("teamInputSection").classList.remove("hidden");
+}
+
+function openMemberDetail(nik) {
+  var emp = findEmployeeByNik(nik);
+  if (!emp) return;
+
+  document.getElementById("teamTableSection").classList.add("hidden");
+  document.getElementById("memberDetailSection").classList.remove("hidden");
+  document.getElementById("memberDetailContent").innerHTML = buildEmployeeDetailHTML(emp);
+}
+
+function backToTeamTable() {
+  document.getElementById("memberDetailSection").classList.add("hidden");
+  document.getElementById("teamTableSection").classList.remove("hidden");
+}
+
+// ─── All Schedules Tab ────────────────────────────────────────────────────────
+function renderAllSchedules() {
+  if (!appData || !appData.schedules) return;
+  var search     = (document.getElementById("schedSearch").value || "").toLowerCase();
+  var typeFilter = document.getElementById("schedTypeFilter").value;
+
+  var filtered = appData.schedules.filter(function(s) {
+    var typeMatch   = !typeFilter || s.trainingType === typeFilter;
+    var searchMatch = !search ||
+      s.competencyRaw.toLowerCase().indexOf(search) !== -1 ||
+      (s.trainer || "").toLowerCase().indexOf(search) !== -1;
+    return typeMatch && searchMatch;
+  });
+
+  filtered.sort(function(a, b) {
+    if (a.isSelfLearning !== b.isSelfLearning) return a.isSelfLearning ? 1 : -1;
+    return a.dateRaw - b.dateRaw;
+  });
+
+  var el = document.getElementById("allScheduleList");
+  if (filtered.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#888;padding:24px;font-size:.85rem">No schedules found.</div>';
+    return;
+  }
+
+  el.innerHTML = filtered.map(function(s) { return buildScheduleCard(s, null); }).join("");
+}
+
+function buildScheduleCard(sched, matchedComps) {
+  var compDisplay = sched.competencyList.map(function(c) {
+    var isMatch = matchedComps && matchedComps.some(function(mc) {
+      return mc.competency.toLowerCase().indexOf(c.toLowerCase()) !== -1 ||
+             c.toLowerCase().indexOf(mc.competency.toLowerCase()) !== -1;
+    });
+    return '<span class="' + (isMatch ? "matched-comp" : (matchedComps ? "other-comp" : "matched-comp")) + '">' + esc(c) + '</span>';
+  }).join('<span style="color:#ccc"> &bull; </span>');
+
+  var typeBadge = sched.isSelfLearning
+    ? '<span class="badge b-selflearn">Self Learning</span>'
+    : sched.trainingType.toLowerCase() === "offline"
+      ? '<span class="badge b-offline">Offline</span>'
+      : '<span class="badge b-online">Online</span>';
+
+  var dateStr = sched.isSelfLearning
+    ? (sched.dateEnd ? 'Until ' + sched.dateEnd : 'Self Learning')
+    : (sched.date + (sched.time ? ' | ' + sched.time : ''));
+
+  var html = '<div class="schedule-card">' +
+    '<div class="schedule-card-header">' +
+      '<div class="schedule-comp-name">' + compDisplay + '</div>' +
+      typeBadge +
+    '</div>' +
+    '<div class="schedule-meta">';
+
+  html += schedMeta(iconCalendar(), dateStr);
+  if (sched.trainer)  html += schedMeta(iconPerson(),   sched.trainer);
+  if (sched.location) html += schedMeta(iconLocation(), sched.location);
+  if (sched.area)     html += schedMeta(iconArea(),     sched.area);
+
+  html += '</div></div>';
+  return html;
+}
+
+function schedMeta(icon, text) {
+  return '<div class="schedule-meta-item">' + icon + '<span>' + esc(text) + '</span></div>';
+}
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+function parseTags(str) {
+  if (!str || str.trim() === "") return [];
+  return str.split(",").map(function(s) { return s.trim(); }).filter(Boolean);
+}
+
+function initials(name) {
+  var parts = (name || "").trim().split(" ").filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function esc(str) {
+  return String(str || "")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// SVG icons
+function iconCalendar() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="12" rx="1.5"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>';
+}
+function iconPerson() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>';
+}
+function iconLocation() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2C5.8 2 4 3.8 4 6c0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z"/><circle cx="8" cy="6" r="1.5"/></svg>';
+}
+function iconArea() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="1.5"/><path d="M5 8h6M8 5v6"/></svg>';
+}
+function iconExternal() {
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M7 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9"/><path d="M10 1h5v5M14 2L8 8"/></svg>';
+}
+</script>
+</body>
+</html>
