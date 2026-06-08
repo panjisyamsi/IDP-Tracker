@@ -148,6 +148,7 @@ tr.clickable:hover td { background: #f5f8ff; cursor: pointer; }
           <input type="text" id="nikInput" placeholder="Enter your NIK"
                  onkeydown="if(event.key==='Enter') lookupEmployee()"
                  oninput="clearProgressResult()">
+          <div style="font-size:.74rem;color:#888;margin-top:5px">Enter your NIK in 5-digit format (e.g. 04030)</div>
         </div>
         <button class="btn btn-primary" onclick="lookupEmployee()">Check Progress</button>
         <div id="progressResult" class="mt-16 hidden"></div>
